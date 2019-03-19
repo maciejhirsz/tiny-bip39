@@ -1,6 +1,6 @@
 ## v0.5.1
 
-No source changes, minor version bump due to the addition of license files, which are 
+No source changes, minor version bump due to the addition of license files, which are
 included when packaging a crate.
 
 The license specified in the Cargo manifest is still correct.
@@ -24,7 +24,7 @@ minor version of the crate.
 
 Should be source compatible with v0.4.0, only the crate dependencies have changed.
 
-### Changes 
+### Changes
 
 * Update ring, bitreader, and error-chain [ae9bdfa]
 
@@ -33,7 +33,7 @@ Should be source compatible with v0.4.0, only the crate dependencies have change
 Mostly source compatible with v0.3.0, except for the additional error kind, and guarding
 against invalid entropy lengths being used to create a Mnemonic.
 
-### Changes 
+### Changes
 
 * Add failure test for Mnemonic::from_entropy()  [4be7216]
 * Return error when invalid entropy is used  [becd7b1]
@@ -75,8 +75,8 @@ phrase the next time you use it.
 You should *think very carefully* before storing or using entropy values directly rather than the
 mnemonic string, they are generally not useful except in advanced use cases and cannot be
 used for HD wallet addresses (that's what the Seed is for, which is not the same thing).
- 
-### Changes 
+
+### Changes
 
 * Better documentation
     * Add quick start example to docs in crate root [4e3b097]
@@ -97,7 +97,7 @@ used for HD wallet addresses (that's what the Seed is for, which is not the same
 
 ## v0.2.1
 
-### Changes 
+### Changes
 
 * Update rand crate
 * Update Ring crate
@@ -119,7 +119,7 @@ only internal organization and crate dependencies.
 
 Minor changes to public API, but also removes a panic!() call
 
-### Changes 
+### Changes
 
 * Implement std::error::Error and std:fmt::Display on Bip39Error
 * Use Into<String> for public function arguments

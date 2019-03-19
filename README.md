@@ -2,8 +2,6 @@
 
 This is a fork of the [`bip39`](https://crates.io/crates/bip39) crate with fixes for v0.6.
 
-It will be deprecated once v0.6 of the upstream crate is released.
-
 ## Changes
 
 See the [changelog](./CHANGELOG.md) file, or the Github releases for specific tags.
