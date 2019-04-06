@@ -274,7 +274,7 @@ impl fmt::LowerHex for Mnemonic {
         }
 
         for byte in self.entropy() {
-            write!(f, "{:x}", byte)?;
+            write!(f, "{:02x}", byte)?;
         }
 
         Ok(())
@@ -288,7 +288,7 @@ impl fmt::UpperHex for Mnemonic {
         }
 
         for byte in self.entropy() {
-            write!(f, "{:X}", byte)?;
+            write!(f, "{:02X}", byte)?;
         }
 
         Ok(())
@@ -346,13 +346,13 @@ mod test {
 
     #[test]
     fn mnemonic_hex_format() {
-        let entropy = &[0x33, 0xE4, 0x6B, 0xB1, 0x3A, 0x74, 0x6E, 0xA4, 0x1C, 0xDD, 0xE4, 0x5C, 0x90, 0x84, 0x6A, 0x79];
+        let entropy = &[0x03, 0xE4, 0x6B, 0xB1, 0x3A, 0x74, 0x6E, 0xA4, 0x1C, 0xDD, 0xE4, 0x5C, 0x90, 0x84, 0x6A, 0x79];
 
         let mnemonic = Mnemonic::from_entropy(entropy, Language::English).unwrap();
 
-        assert_eq!(format!("{:x}", mnemonic), "33e46bb13a746ea41cdde45c90846a79");
-        assert_eq!(format!("{:X}", mnemonic), "33E46BB13A746EA41CDDE45C90846A79");
-        assert_eq!(format!("{:#x}", mnemonic), "0x33e46bb13a746ea41cdde45c90846a79");
-        assert_eq!(format!("{:#X}", mnemonic), "0x33E46BB13A746EA41CDDE45C90846A79");
+        assert_eq!(format!("{:x}", mnemonic), "03e46bb13a746ea41cdde45c90846a79");
+        assert_eq!(format!("{:X}", mnemonic), "03E46BB13A746EA41CDDE45C90846A79");
+        assert_eq!(format!("{:#x}", mnemonic), "0x03e46bb13a746ea41cdde45c90846a79");
+        assert_eq!(format!("{:#X}", mnemonic), "0x03E46BB13A746EA41CDDE45C90846A79");
     }
 }

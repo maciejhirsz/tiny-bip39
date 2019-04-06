@@ -59,7 +59,7 @@ impl fmt::LowerHex for Seed {
         }
 
         for byte in &self.bytes {
-            write!(f, "{:x}", byte)?;
+            write!(f, "{:02x}", byte)?;
         }
 
         Ok(())
@@ -73,9 +73,28 @@ impl fmt::UpperHex for Seed {
         }
 
         for byte in &self.bytes {
-            write!(f, "{:X}", byte)?;
+            write!(f, "{:02X}", byte)?;
         }
 
         Ok(())
+    }
+}
+
+#[cfg(test)]
+mod test {
+    use super::*;
+    use language::Language;
+
+    #[test]
+    fn seed_hex_format() {
+        let entropy = &[0x33, 0xE4, 0x6B, 0xB1, 0x3A, 0x74, 0x6E, 0xA4, 0x1C, 0xDD, 0xE4, 0x5C, 0x90, 0x84, 0x6A, 0x79];
+
+        let mnemonic = Mnemonic::from_entropy(entropy, Language::English).unwrap();
+        let seed = Seed::new(&mnemonic, "password");
+
+        assert_eq!(format!("{:x}", seed), "0bde96f14c35a66235478e0c16c152fcaf6301e4d9a81d3febc50879fe7e5438e6a8dd3e39bdf3ab7b12d6b44218710e17d7a2844ee9633fab0e03d9a6c8569b");
+        assert_eq!(format!("{:X}", seed), "0BDE96F14C35A66235478E0C16C152FCAF6301E4D9A81D3FEBC50879FE7E5438E6A8DD3E39BDF3AB7B12D6B44218710E17D7A2844EE9633FAB0E03D9A6C8569B");
+        assert_eq!(format!("{:#x}", seed), "0x0bde96f14c35a66235478e0c16c152fcaf6301e4d9a81d3febc50879fe7e5438e6a8dd3e39bdf3ab7b12d6b44218710e17d7a2844ee9633fab0e03d9a6c8569b");
+        assert_eq!(format!("{:#X}", seed), "0x0BDE96F14C35A66235478E0C16C152FCAF6301E4D9A81D3FEBC50879FE7E5438E6A8DD3E39BDF3AB7B12D6B44218710E17D7A2844EE9633FAB0E03D9A6C8569B");
     }
 }
