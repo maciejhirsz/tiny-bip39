@@ -4,3 +4,7 @@ target
 .idea
 node_modules
 Cargo.lock
+.*.sw[po]
+\#*#
+.#*
+*~
