@@ -1,4 +1,4 @@
-use mnemonic_type::MnemonicType;
+use crate::mnemonic_type::MnemonicType;
 
 #[derive(Debug, Fail)]
 pub enum ErrorKind {

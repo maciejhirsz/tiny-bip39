@@ -5,8 +5,7 @@
 //! [Seed]: ../seed/struct.Seed.html
 //!
 
-extern crate rand;
-use self::rand::{ thread_rng, RngCore };
+use rand::{ thread_rng, RngCore };
 use sha2::Digest;
 use hmac::Hmac;
 

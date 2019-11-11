@@ -1,6 +1,6 @@
-use crypto::pbkdf2;
-use mnemonic::Mnemonic;
 use std::fmt;
+use crate::crypto::pbkdf2;
+use crate::mnemonic::Mnemonic;
 
 /// The secret value used to derive HD wallet addresses from a [`Mnemonic`][Mnemonic] phrase.
 ///
@@ -83,7 +83,7 @@ impl fmt::UpperHex for Seed {
 #[cfg(test)]
 mod test {
     use super::*;
-    use language::Language;
+    use crate::language::Language;
 
     #[test]
     fn seed_hex_format() {

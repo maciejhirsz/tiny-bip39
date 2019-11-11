@@ -1,10 +1,10 @@
-use util::{checksum, IterExt, BitWriter};
-use crypto::{gen_random_bytes, sha256_first_byte};
-use error::ErrorKind;
-use failure::Error;
-use mnemonic_type::MnemonicType;
-use language::Language;
 use std::fmt;
+use failure::Error;
+use crate::crypto::{gen_random_bytes, sha256_first_byte};
+use crate::error::ErrorKind;
+use crate::language::Language;
+use crate::mnemonic_type::MnemonicType;
+use crate::util::{checksum, IterExt, BitWriter};
 
 /// The primary type in this crate, most tasks require creating or using one.
 ///
