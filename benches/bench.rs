@@ -1,15 +1,16 @@
 #![feature(test)]
 
-extern crate test;
 extern crate bip39;
+extern crate test;
 
 use test::Bencher;
 
-use bip39::{Mnemonic, MnemonicType, Language, Seed};
+use bip39::{Language, Mnemonic, MnemonicType, Seed};
 
 #[bench]
 fn validate(b: &mut Bencher) {
-    let phrase = "silly laptop awake length nature thunder category claim reveal supply attitude drip";
+    let phrase =
+        "silly laptop awake length nature thunder category claim reveal supply attitude drip";
 
     b.iter(|| {
         let _ = Mnemonic::validate(phrase, Language::English);
@@ -18,7 +19,8 @@ fn validate(b: &mut Bencher) {
 
 #[bench]
 fn from_entropy(b: &mut Bencher) {
-    let phrase = "silly laptop awake length nature thunder category claim reveal supply attitude drip";
+    let phrase =
+        "silly laptop awake length nature thunder category claim reveal supply attitude drip";
     let m = Mnemonic::from_phrase(phrase, Language::English).unwrap();
     let entropy = m.entropy();
 
@@ -36,7 +38,8 @@ fn new_mnemonic(b: &mut Bencher) {
 
 #[bench]
 fn new_seed(b: &mut Bencher) {
-    let phrase = "silly laptop awake length nature thunder category claim reveal supply attitude drip";
+    let phrase =
+        "silly laptop awake length nature thunder category claim reveal supply attitude drip";
     let m = Mnemonic::from_phrase(phrase, Language::English).unwrap();
 
     b.iter(|| {
