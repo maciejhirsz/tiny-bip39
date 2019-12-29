@@ -137,7 +137,11 @@ impl Mnemonic {
     where
         S: Into<String>,
     {
-        let phrase = phrase.into();
+        let phrase: String = phrase
+            .into()
+            .split(" ")
+            .filter(|word| !word.is_empty())
+            .join(" ");
 
         // this also validates the checksum and phrase length before returning the entropy so we
         // can store it. We don't use the validate function here to avoid having a public API that

@@ -29,6 +29,18 @@ fn validate_12_english() {
 }
 
 #[test]
+fn validate_12_english_extra_spaces() {
+    let phrase = " park remain  person kitchen mule spell knee armed position rail grid ankle ";
+    let clean_phrase = "park remain person kitchen mule spell knee armed position rail grid ankle";
+
+    let mnemonic = Mnemonic::from_phrase(phrase, Language::English).expect("Can create a Mnemonic");
+    let clean_mnemonic =
+        Mnemonic::from_phrase(clean_phrase, Language::English).expect("Can create a Mnemonic");
+
+    assert_eq!(mnemonic.entropy(), clean_mnemonic.entropy());
+}
+
+#[test]
 fn validate_15_english() {
     let phrase = "any paddle cabbage armor atom satoshi fiction night wisdom nasty they midnight chicken play phone";
 
