@@ -133,15 +133,8 @@ impl Mnemonic {
     /// ```
     ///
     /// [Mnemonic]: ../mnemonic/struct.Mnemonic.html
-    pub fn from_phrase<S>(phrase: S, lang: Language) -> Result<Mnemonic, Error>
-    where
-        S: Into<String>,
-    {
-        let phrase: String = phrase
-            .into()
-            .split(" ")
-            .filter(|word| !word.is_empty())
-            .join(" ");
+    pub fn from_phrase(phrase: &str, lang: Language) -> Result<Mnemonic, Error> {
+        let phrase: String = phrase.split_whitespace().join(" ");
 
         // this also validates the checksum and phrase length before returning the entropy so we
         // can store it. We don't use the validate function here to avoid having a public API that
