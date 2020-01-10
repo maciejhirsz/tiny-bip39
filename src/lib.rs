@@ -29,12 +29,6 @@
 //!
 #[macro_use]
 extern crate failure;
-#[macro_use]
-extern crate once_cell;
-extern crate hashbrown;
-extern crate hmac;
-extern crate pbkdf2;
-extern crate sha2;
 
 mod error;
 mod language;
