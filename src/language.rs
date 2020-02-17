@@ -173,3 +173,62 @@ impl Default for Language {
         Language::English
     }
 }
+
+#[cfg(test)]
+mod test {
+    use super::lazy;
+    use super::WordList;
+
+    fn is_wordlist_nfkd(wl: &WordList) -> bool {
+        for idx in 0..2047 {
+            let word = wl.get_word(idx.into());
+            if !unicode_normalization::is_nfkd(word) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    #[test]
+    #[cfg(feature = "chinese-simplified")]
+    fn chinese_simplified_wordlist_is_nfkd() {
+        assert!(is_wordlist_nfkd(&lazy::WORDLIST_CHINESE_SIMPLIFIED));
+    }
+
+    #[test]
+    #[cfg(feature = "chinese-traditional")]
+    fn chinese_traditional_wordlist_is_nfkd() {
+        assert!(is_wordlist_nfkd(&lazy::WORDLIST_CHINESE_TRADITIONAL));
+    }
+
+    #[test]
+    #[cfg(feature = "french")]
+    fn french_wordlist_is_nfkd() {
+        assert!(is_wordlist_nfkd(&lazy::WORDLIST_FRENCH));
+    }
+
+    #[test]
+    #[cfg(feature = "italian")]
+    fn italian_wordlist_is_nfkd() {
+        assert!(is_wordlist_nfkd(&lazy::WORDLIST_ITALIAN));
+    }
+
+    #[test]
+    #[cfg(feature = "japanese")]
+    fn japanese_wordlist_is_nfkd() {
+        assert!(is_wordlist_nfkd(&lazy::WORDLIST_JAPANESE));
+    }
+
+    #[test]
+    #[cfg(feature = "korean")]
+    fn korean_wordlist_is_nfkd() {
+        assert!(is_wordlist_nfkd(&lazy::WORDLIST_KOREAN));
+    }
+
+    #[test]
+    #[cfg(feature = "spanish")]
+    fn spanish_wordlist_is_nfkd() {
+        assert!(is_wordlist_nfkd(&lazy::WORDLIST_SPANISH));
+    }
+
+}

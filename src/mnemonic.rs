@@ -1,5 +1,6 @@
 use std::fmt;
 use failure::Error;
+use unicode_normalization::UnicodeNormalization;
 use crate::crypto::{gen_random_bytes, sha256_first_byte};
 use crate::error::ErrorKind;
 use crate::language::Language;
@@ -134,7 +135,9 @@ impl Mnemonic {
     ///
     /// [Mnemonic]: ../mnemonic/struct.Mnemonic.html
     pub fn from_phrase(phrase: &str, lang: Language) -> Result<Mnemonic, Error> {
-        let phrase: String = phrase.split_whitespace().join(" ");
+        let words = phrase.split_whitespace();
+        let mut normalized_words = words.map(|w| w.nfkd().to_string());
+        let phrase: String = normalized_words.join(" ");
 
         // this also validates the checksum and phrase length before returning the entropy so we
         // can store it. We don't use the validate function here to avoid having a public API that

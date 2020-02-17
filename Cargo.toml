@@ -38,6 +38,7 @@ hmac = "0.7.1"
 pbkdf2 = { version = "0.3.0", default-features = false }
 rand = "0.7.2"
 once_cell = { version = "1.2.0", features = [ "parking_lot" ] }
+unicode-normalization = "0.1.12"
 
 [dev-dependencies]
 hex = "0.4.0"
