@@ -135,9 +135,10 @@ impl Mnemonic {
     ///
     /// [Mnemonic]: ../mnemonic/struct.Mnemonic.html
     pub fn from_phrase(phrase: &str, lang: Language) -> Result<Mnemonic, Error> {
-        let words = phrase.split_whitespace();
-        let mut normalized_words = words.map(|w| w.nfkd().to_string());
-        let phrase: String = normalized_words.join(" ");
+        let phrase = phrase
+            .split_whitespace()
+            .map(|w| w.nfkd())
+            .join::<String>(" ");
 
         // this also validates the checksum and phrase length before returning the entropy so we
         // can store it. We don't use the validate function here to avoid having a public API that
