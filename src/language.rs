@@ -1,7 +1,7 @@
-use failure::Error;
-use rustc_hash::FxHashMap;
 use crate::error::ErrorKind;
 use crate::util::{Bits, Bits11};
+use failure::Error;
+use rustc_hash::FxHashMap;
 
 pub struct WordMap {
     inner: FxHashMap<&'static str, Bits11>,
@@ -102,7 +102,7 @@ mod lazy {
 ///
 /// [Mnemonic]: ./mnemonic/struct.Mnemonic.html
 /// [Seed]: ./seed/struct.Seed.html
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq)]
 pub enum Language {
     English,
     #[cfg(feature = "chinese-simplified")]
@@ -122,6 +122,29 @@ pub enum Language {
 }
 
 impl Language {
+    /// Construct a word list from its language code. Returns None
+    /// if the language code is not valid or not supported.
+    pub fn from_language_code(language_code: &str) -> Option<Self> {
+        match &language_code.to_ascii_lowercase()[..] {
+            "en" => Some(Language::English),
+            #[cfg(feature = "chinese-simplified")]
+            "zh-hans" => Some(Language::ChineseSimplified),
+            #[cfg(feature = "chinese-traditional")]
+            "zh-hant" => Some(Language::ChineseTraditional),
+            #[cfg(feature = "french")]
+            "fr" => Some(Language::French),
+            #[cfg(feature = "italian")]
+            "it" => Some(Language::Italian),
+            #[cfg(feature = "japanese")]
+            "ja" => Some(Language::Japanese),
+            #[cfg(feature = "korean")]
+            "ko" => Some(Language::Korean),
+            #[cfg(feature = "spanish")]
+            "es" => Some(Language::Spanish),
+            _ => None,
+        }
+    }
+
     /// Get the word list for this language
     pub fn wordlist(&self) -> &'static WordList {
         match *self {
@@ -177,6 +200,7 @@ impl Default for Language {
 #[cfg(test)]
 mod test {
     use super::lazy;
+    use super::Language;
     use super::WordList;
 
     fn is_wordlist_nfkd(wl: &WordList) -> bool {
@@ -231,4 +255,71 @@ mod test {
         assert!(is_wordlist_nfkd(&lazy::WORDLIST_SPANISH));
     }
 
+    #[test]
+    fn from_language_code_en() {
+        assert_eq!(
+            Language::from_language_code("En").expect("en is a valid language"),
+            Language::English
+        );
+    }
+    #[test]
+    #[cfg(feature = "chinese-simplified")]
+    fn from_language_code_cn_hans() {
+        assert_eq!(
+            Language::from_language_code("Zh-Hans").expect("zh-hans is a valid language"),
+            Language::ChineseSimplified
+        );
+    }
+    #[test]
+    #[cfg(feature = "chinese-traditional")]
+    fn from_language_code_cn_hant() {
+        assert_eq!(
+            Language::from_language_code("zh-hanT").expect("zh-hant is a valid language"),
+            Language::ChineseTraditional
+        );
+    }
+    #[test]
+    #[cfg(feature = "french")]
+    fn from_language_code_fr() {
+        assert_eq!(
+            Language::from_language_code("fr").expect("fr is a valid language"),
+            Language::French
+        );
+    }
+    #[test]
+    #[cfg(feature = "italian")]
+    fn from_language_code_it() {
+        assert_eq!(
+            Language::from_language_code("It").expect("it is a valid language"),
+            Language::Italian
+        );
+    }
+    #[test]
+    #[cfg(feature = "japanese")]
+    fn from_language_code_ja() {
+        assert_eq!(
+            Language::from_language_code("Ja").expect("ja is a valid language"),
+            Language::Japanese
+        );
+    }
+    #[test]
+    #[cfg(feature = "korean")]
+    fn from_language_code_ko() {
+        assert_eq!(
+            Language::from_language_code("kO").expect("ko is a valid language"),
+            Language::Korean
+        );
+    }
+    #[test]
+    #[cfg(feature = "spanish")]
+    fn from_language_code_es() {
+        assert_eq!(
+            Language::from_language_code("ES").expect("es is a valid language"),
+            Language::Spanish
+        );
+    }
+    #[test]
+    fn from_invalid_language_code() {
+        assert_eq!(Language::from_language_code("not a real language"), None);
+    }
 }
