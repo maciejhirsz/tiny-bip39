@@ -82,36 +82,49 @@ fn validate_english() {
 }
 
 #[test]
+#[cfg(feature = "chinese-simplified")]
+
 fn validate_chinese_simplified() {
     validate_language(Language::ChineseSimplified);
 }
 
 #[test]
+#[cfg(feature = "chinese-traditional")]
+
 fn validate_chinese_traditional() {
     validate_language(Language::ChineseTraditional);
 }
 
 #[test]
+#[cfg(feature = "french")]
+
 fn validate_french() {
     validate_language(Language::French);
 }
 
 #[test]
+#[cfg(feature = "italian")]
 fn validate_italian() {
     validate_language(Language::Italian);
 }
 
 #[test]
+#[cfg(feature = "japanese")]
+
 fn validate_japanese() {
     validate_language(Language::Japanese);
 }
 
 #[test]
+#[cfg(feature = "korean")]
+
 fn validate_korean() {
     validate_language(Language::Korean);
 }
 
 #[test]
+#[cfg(feature = "spanish")]
+
 fn validate_spanish() {
     validate_language(Language::Spanish);
 }
