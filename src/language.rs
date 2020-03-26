@@ -24,6 +24,17 @@ impl WordList {
     pub fn get_word(&self, bits: Bits11) -> &'static str {
         self.inner[bits.bits() as usize]
     }
+
+    pub fn get_words_by_prefix(&self, prefix: &str) -> &[&'static str] {
+        let start = self.inner
+            .binary_search(&prefix)
+            .unwrap_or_else(|idx| idx);
+        let count = self.inner[start..].iter()
+            .take_while(|word| word.starts_with(prefix))
+            .count();
+    
+        &self.inner[start..start + count]
+    }
 }
 
 mod lazy {
@@ -203,6 +214,27 @@ mod test {
     use super::Language;
     use super::WordList;
 
+    #[test]
+    fn words_by_prefix() {
+        let wl = &lazy::WORDLIST_ENGLISH;
+        let res = wl.get_words_by_prefix("woo");
+        assert_eq!(res, ["wood","wool"]);
+    }
+
+    #[test]
+    fn all_words_by_prefix() {
+        let wl = &lazy::WORDLIST_ENGLISH;
+        let res = wl.get_words_by_prefix("");
+        assert_eq!(res.len(), 2048);
+    }
+
+    #[test]
+    fn words_by_invalid_prefix() {
+        let wl = &lazy::WORDLIST_ENGLISH;
+        let res = wl.get_words_by_prefix("woof");
+        assert!(res.is_empty());
+    }
+
     fn is_wordlist_nfkd(wl: &WordList) -> bool {
         for idx in 0..2047 {
             let word = wl.get_word(idx.into());
@@ -262,6 +294,7 @@ mod test {
             Language::English
         );
     }
+
     #[test]
     #[cfg(feature = "chinese-simplified")]
     fn from_language_code_cn_hans() {
@@ -270,6 +303,7 @@ mod test {
             Language::ChineseSimplified
         );
     }
+
     #[test]
     #[cfg(feature = "chinese-traditional")]
     fn from_language_code_cn_hant() {
@@ -278,6 +312,7 @@ mod test {
             Language::ChineseTraditional
         );
     }
+
     #[test]
     #[cfg(feature = "french")]
     fn from_language_code_fr() {
@@ -286,6 +321,7 @@ mod test {
             Language::French
         );
     }
+
     #[test]
     #[cfg(feature = "italian")]
     fn from_language_code_it() {
@@ -294,6 +330,7 @@ mod test {
             Language::Italian
         );
     }
+
     #[test]
     #[cfg(feature = "japanese")]
     fn from_language_code_ja() {
@@ -302,6 +339,7 @@ mod test {
             Language::Japanese
         );
     }
+
     #[test]
     #[cfg(feature = "korean")]
     fn from_language_code_ko() {
@@ -310,6 +348,7 @@ mod test {
             Language::Korean
         );
     }
+
     #[test]
     #[cfg(feature = "spanish")]
     fn from_language_code_es() {
@@ -318,6 +357,7 @@ mod test {
             Language::Spanish
         );
     }
+
     #[test]
     fn from_invalid_language_code() {
         assert_eq!(Language::from_language_code("not a real language"), None);
