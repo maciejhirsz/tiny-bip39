@@ -5,7 +5,7 @@ authors = [
     "Stephen Oliver <steve@infincia.com>",
     "Maciej Hirsz <hello@maciej.codes>",
 ]
-license = "MIT/Apache-2.0"
+license = "MIT OR Apache-2.0"
 homepage = "https://github.com/maciejhirsz/tiny-bip39/"
 repository = "https://github.com/maciejhirsz/tiny-bip39/"
 readme = "README.md"

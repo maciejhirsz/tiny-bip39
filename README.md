@@ -1,19 +1,26 @@
 # tiny-bip39
 
+[![Travis shield](https://travis-ci.org/maciejhirsz/tiny-bip39.svg)](https://travis-ci.org/maciejhirsz/tiny-bip39.svg)
+[![Crates.io version shield](https://img.shields.io/crates/v/tiny-bip39.svg)](https://crates.io/crates/tiny-bip39)
+[![Crates.io license shield](https://img.shields.io/crates/l/tiny-bip39.svg)](https://crates.io/crates/tiny-bip39)
+
 This is a fork of the [`bip39`](https://crates.io/crates/bip39) crate with fixes for v0.6.
 
 ## Changes
 
-See the [changelog](./CHANGELOG.md) file, or the Github releases for specific tags.
+See the [releases](https://github.com/maciejhirsz/tiny-bip39/releases) for changes since the fork.
 
 ## [Documentation](https://docs.rs/tiny-bip39)
 
-Add `bip39` to your Cargo file, and then refer to the documentation
-for use.
+This crate supports multiple languages, all are enabled by default, you
+can choose to specify them with feature flags:
 
-Only an English wordlist is included at the moment, but support for
-other languages is already present in the code.
++ `chinese-simplified`
++ `chinese-traditional`
++ `french`
++ `italian`
++ `japanese`
++ `korean`
++ `spanish`
 
-A set of simple tests have been written but they only generate new
-mnemonics and validate a selection of known valid mnemonics generated
-by other tools
+English is always enabled.

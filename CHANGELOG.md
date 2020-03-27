@@ -1,3 +1,7 @@
+# Note
+
+This is an archive, for new changes see the [releases](https://github.com/maciejhirsz/tiny-bip39/releases) page on GitHub.
+
 ## v0.5.1
 
 No source changes, minor version bump due to the addition of license files, which are
