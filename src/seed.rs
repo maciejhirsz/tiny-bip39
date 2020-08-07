@@ -38,6 +38,18 @@ impl Seed {
     pub fn as_bytes(&self) -> &[u8] {
         &self.bytes
     }
+
+    /// Clear a seed value to prevent the leak of sensitive data.
+    fn clear(&mut self) {
+        let ptr = self.bytes.as_mut_ptr();
+        let len = self.bytes.len() as isize;
+        for i in 0..len {
+            unsafe {
+                // We use volatile writes to avoid compiler optimization
+                (ptr.offset(i)).write_volatile(0);
+            }
+        }
+    }
 }
 
 impl AsRef<[u8]> for Seed {
@@ -77,6 +89,12 @@ impl fmt::UpperHex for Seed {
         }
 
         Ok(())
+    }
+}
+
+impl Drop for Seed {
+    fn drop(&mut self) {
+        self.clear();
     }
 }
 
