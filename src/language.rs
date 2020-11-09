@@ -2,6 +2,7 @@ use crate::error::ErrorKind;
 use crate::util::{Bits, Bits11};
 use failure::Error;
 use rustc_hash::FxHashMap;
+use zeroize::Zeroize;
 
 pub struct WordMap {
     inner: FxHashMap<&'static str, Bits11>,
@@ -32,7 +33,7 @@ impl WordList {
         let count = self.inner[start..].iter()
             .take_while(|word| word.starts_with(prefix))
             .count();
-    
+
         &self.inner[start..start + count]
     }
 }
@@ -113,7 +114,8 @@ mod lazy {
 ///
 /// [Mnemonic]: ./mnemonic/struct.Mnemonic.html
 /// [Seed]: ./seed/struct.Seed.html
-#[derive(Debug, Clone, Copy, PartialEq)]
+#[derive(Debug, Clone, Copy, PartialEq, Zeroize)]
+#[zeroize(drop)]
 pub enum Language {
     English,
     #[cfg(feature = "chinese-simplified")]

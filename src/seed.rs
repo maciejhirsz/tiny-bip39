@@ -1,5 +1,6 @@
 use std::fmt;
 use unicode_normalization::UnicodeNormalization;
+use zeroize::Zeroize;
 use crate::crypto::pbkdf2;
 use crate::mnemonic::Mnemonic;
 
@@ -13,11 +14,14 @@ use crate::mnemonic::Mnemonic;
 /// HD wallet addresses using another crate (deriving HD wallet addresses is outside the scope of this
 /// crate and the BIP39 standard).
 ///
+/// [`Seed`][Seed] implements [`Zeroize`][Zeroize], so it's bytes will be zeroed when it's dropped.
+///
 /// [Mnemonic]: ./mnemonic/struct.Mnemonic.html
 /// [Seed]: ./seed/struct.Seed.html
 /// [Seed::as_bytes()]: ./seed/struct.Seed.html#method.as_bytes
 
-#[derive(Clone)]
+#[derive(Clone, Zeroize)]
+#[zeroize(drop)]
 pub struct Seed {
     bytes: Vec<u8>,
 }

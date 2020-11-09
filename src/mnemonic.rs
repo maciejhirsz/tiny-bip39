@@ -1,6 +1,8 @@
 use std::fmt;
 use failure::Error;
+use std::mem;
 use unicode_normalization::UnicodeNormalization;
+use zeroize::Zeroize;
 use crate::crypto::{gen_random_bytes, sha256_first_byte};
 use crate::error::ErrorKind;
 use crate::language::Language;
@@ -22,6 +24,8 @@ use crate::util::{checksum, BitWriter, IterExt};
 /// but beware that the entropy value is **not the same thing** as an HD wallet seed, and should
 /// *never* be used that way.
 ///
+/// [`Mnemonic`][Mnemonic] implements [`Zeroize`][Zeroize], so it's bytes will be zeroed when it's dropped.
+///
 /// [Mnemonic]: ./mnemonic/struct.Mnemonic.html
 /// [Mnemonic::new()]: ./mnemonic/struct.Mnemonic.html#method.new
 /// [Mnemonic::from_phrase()]: ./mnemonic/struct.Mnemonic.html#method.from_phrase
@@ -30,7 +34,8 @@ use crate::util::{checksum, BitWriter, IterExt};
 /// [Seed::new()]: ./seed/struct.Seed.html#method.new
 /// [Seed::as_bytes()]: ./seed/struct.Seed.html#method.as_bytes
 ///
-#[derive(Clone)]
+#[derive(Clone, Zeroize)]
+#[zeroize(drop)]
 pub struct Mnemonic {
     phrase: String,
     lang: Language,
@@ -220,10 +225,11 @@ impl Mnemonic {
     }
 
     /// Consume the `Mnemonic` and return the phrase as a `String`.
-    ///
-    /// This operation doesn't perform any allocations.
-    pub fn into_phrase(self) -> String {
-        self.phrase
+    pub fn into_phrase(mut self) -> String {
+        // Create an empty string and swap values with the mnemonic's phrase.
+        // This allows `Mnemonic` to implement `Drop`, while still returning the phrase.
+        mem::replace(&mut self.phrase, String:new());
+        phrase
     }
 
     /// Get the original entropy value of the mnemonic phrase as a slice.
