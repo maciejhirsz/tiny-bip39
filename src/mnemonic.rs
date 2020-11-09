@@ -228,8 +228,7 @@ impl Mnemonic {
     pub fn into_phrase(mut self) -> String {
         // Create an empty string and swap values with the mnemonic's phrase.
         // This allows `Mnemonic` to implement `Drop`, while still returning the phrase.
-        mem::replace(&mut self.phrase, String:new());
-        phrase
+        mem::replace(&mut self.phrase, String::new())
     }
 
     /// Get the original entropy value of the mnemonic phrase as a slice.
