@@ -31,7 +31,8 @@ spanish = []
 default = ["chinese-simplified", "chinese-traditional", "french", "italian", "japanese", "korean", "spanish"]
 
 [dependencies]
-failure = "0.1.8"
+anyhow = "1.0.34"
+thiserror = "1.0.22"
 rustc-hash = "1.1.0"
 sha2 = "0.9.1"
 hmac = "0.8.1"

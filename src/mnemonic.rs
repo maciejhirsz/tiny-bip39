@@ -1,5 +1,5 @@
 use std::fmt;
-use failure::Error;
+use anyhow::Error;
 use std::mem;
 use unicode_normalization::UnicodeNormalization;
 use zeroize::Zeroize;
