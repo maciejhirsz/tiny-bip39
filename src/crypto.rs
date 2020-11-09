@@ -10,13 +10,13 @@ use self::rand::{thread_rng, RngCore};
 use hmac::Hmac;
 use sha2::Digest;
 
-const PBKDF2_ROUNDS: usize = 2048;
+const PBKDF2_ROUNDS: u32 = 2048;
 const PBKDF2_BYTES: usize = 64;
 
 /// SHA256 helper function, internal to the crate
 ///
 pub(crate) fn sha256_first_byte(input: &[u8]) -> u8 {
-    sha2::Sha256::digest(input).as_ref()[0]
+    sha2::Sha256::digest(input)[0]
 }
 
 /// Random byte generator, used to create new mnemonics
