@@ -27,9 +27,6 @@
 //! println!("{:X}", seed);
 //! ```
 //!
-#[macro_use]
-extern crate failure;
-
 mod error;
 mod language;
 mod mnemonic;

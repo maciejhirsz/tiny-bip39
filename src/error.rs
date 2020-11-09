@@ -1,18 +1,37 @@
 use crate::mnemonic_type::MnemonicType;
+use thiserror::Error;
 
-#[derive(Debug, Fail)]
+#[derive(Debug, Error)]
 pub enum ErrorKind {
-    #[fail(display = "invalid checksum")]
+    #[error("invalid checksum")]
     InvalidChecksum,
-    #[fail(display = "invalid word in phrase")]
+    #[error("invalid word in phrase")]
     InvalidWord,
-    #[fail(display = "invalid keysize: {}", _0)]
+    #[error("invalid keysize: {0}")]
     InvalidKeysize(usize),
-    #[fail(display = "invalid number of words in phrase: {}", _0)]
+    #[error("invalid number of words in phrase: {0}")]
     InvalidWordLength(usize),
-    #[fail(
-        display = "invalid entropy length {}bits for mnemonic type {:?}",
-        _0, _1
-    )]
+    #[error("invalid entropy length {0}bits for mnemonic type {1:?}")]
     InvalidEntropyLength(usize, MnemonicType),
+}
+
+#[cfg(test)]
+mod test {
+    use super::*;
+
+    #[test]
+    fn prints_correctly() {
+        assert_eq!(
+            format!("{}", ErrorKind::InvalidChecksum),
+            "invalid checksum",
+        );
+        assert_eq!(
+            format!("{}", ErrorKind::InvalidKeysize(42)),
+            "invalid keysize: 42",
+        );
+        assert_eq!(
+            format!("{}", ErrorKind::InvalidEntropyLength(42, MnemonicType::Words12)),
+            "invalid entropy length 42bits for mnemonic type Words12",
+        );
+    }
 }

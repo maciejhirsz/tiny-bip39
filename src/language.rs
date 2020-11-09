@@ -1,6 +1,5 @@
 use crate::error::ErrorKind;
 use crate::util::{Bits, Bits11};
-use failure::Error;
 use rustc_hash::FxHashMap;
 use zeroize::Zeroize;
 
@@ -13,7 +12,7 @@ pub struct WordList {
 }
 
 impl WordMap {
-    pub fn get_bits(&self, word: &str) -> Result<Bits11, Error> {
+    pub fn get_bits(&self, word: &str) -> Result<Bits11, ErrorKind> {
         match self.inner.get(word) {
             Some(n) => Ok(*n),
             None => Err(ErrorKind::InvalidWord)?,

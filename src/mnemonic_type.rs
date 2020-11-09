@@ -1,5 +1,5 @@
 use std::fmt;
-use failure::Error;
+use anyhow::Error;
 use crate::error::ErrorKind;
 
 const ENTROPY_OFFSET: usize = 8;
