@@ -1,6 +1,6 @@
 [package]
 name = "tiny-bip39"
-version = "0.8.0"
+version = "0.9.0"
 authors = [
     "Stephen Oliver <steve@infincia.com>",
     "Maciej Hirsz <hello@maciej.codes>",
@@ -21,14 +21,14 @@ path = "src/lib.rs"
 [features]
 chinese-simplified = []
 chinese-traditional = []
-# Note: English is the standard for bip39 so always included
+english = []
 french = []
 italian = []
 japanese = []
 korean = []
 spanish = []
 
-default = ["chinese-simplified", "chinese-traditional", "french", "italian", "japanese", "korean", "spanish"]
+default = ["english", "chinese-simplified", "chinese-traditional", "french", "italian", "japanese", "korean", "spanish"]
 
 [dependencies]
 anyhow = "1.0.34"

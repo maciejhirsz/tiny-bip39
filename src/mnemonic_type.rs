@@ -29,6 +29,7 @@ const ENTROPY_OFFSET: usize = 8;
 /// [Mnemonic]: ../mnemonic/struct.Mnemonic.html
 /// [Seed]: ../seed/struct.Seed.html
 ///
+#[cfg_attr(test, derive(PartialEq))]
 #[derive(Debug, Copy, Clone)]
 pub enum MnemonicType {
     //  ... = (entropy_bits << ...)   | checksum_bits

@@ -5,7 +5,7 @@ use unicode_normalization::UnicodeNormalization;
 use zeroize::Zeroize;
 use crate::crypto::{gen_random_bytes, sha256_first_byte};
 use crate::error::ErrorKind;
-use crate::language::Language;
+use crate::language::{LangTrait, Language};
 use crate::mnemonic_type::MnemonicType;
 use crate::util::{checksum, BitWriter, IterExt};
 
@@ -34,15 +34,14 @@ use crate::util::{checksum, BitWriter, IterExt};
 /// [Seed::new()]: ./seed/struct.Seed.html#method.new
 /// [Seed::as_bytes()]: ./seed/struct.Seed.html#method.as_bytes
 ///
-#[derive(Clone, Zeroize)]
-#[zeroize(drop)]
-pub struct Mnemonic {
+#[derive(Clone)]
+pub struct Mnemonic<Lang: LangTrait = Language> {
     phrase: String,
-    lang: Language,
+    lang: Lang,
     entropy: Vec<u8>,
 }
 
-impl Mnemonic {
+impl<Lang: LangTrait> Mnemonic<Lang> {
     /// Generates a new [`Mnemonic`][Mnemonic]
     ///
     /// Use [`Mnemonic::phrase()`][Mnemonic::phrase()] to get an `str` slice of the generated phrase.
@@ -62,7 +61,7 @@ impl Mnemonic {
     ///
     /// [Mnemonic]: ./mnemonic/struct.Mnemonic.html
     /// [Mnemonic::phrase()]: ./mnemonic/struct.Mnemonic.html#method.phrase
-    pub fn new(mtype: MnemonicType, lang: Language) -> Mnemonic {
+    pub fn new(mtype: MnemonicType, lang: Lang) -> Self {
         let entropy = gen_random_bytes(mtype.entropy_bits() / 8);
 
         Mnemonic::from_entropy_unchecked(entropy, lang)
@@ -83,14 +82,14 @@ impl Mnemonic {
     /// ```
     ///
     /// [Mnemonic]: ../mnemonic/struct.Mnemonic.html
-    pub fn from_entropy(entropy: &[u8], lang: Language) -> Result<Mnemonic, Error> {
+    pub fn from_entropy(entropy: &[u8], lang: Lang) -> Result<Self, Error> {
         // Validate entropy size
         MnemonicType::for_key_size(entropy.len() * 8)?;
 
         Ok(Self::from_entropy_unchecked(entropy, lang))
     }
 
-    fn from_entropy_unchecked<E>(entropy: E, lang: Language) -> Mnemonic
+    fn from_entropy_unchecked<E>(entropy: E, lang: Lang) -> Self
     where
         E: Into<Vec<u8>>,
     {
@@ -139,7 +138,7 @@ impl Mnemonic {
     /// ```
     ///
     /// [Mnemonic]: ../mnemonic/struct.Mnemonic.html
-    pub fn from_phrase(phrase: &str, lang: Language) -> Result<Mnemonic, Error> {
+    pub fn from_phrase(phrase: &str, lang: Lang) -> Result<Self, Error> {
         let phrase = phrase
             .split_whitespace()
             .map(|w| w.nfkd())
@@ -173,7 +172,7 @@ impl Mnemonic {
     ///
     /// assert!(Mnemonic::validate(test_mnemonic, Language::English).is_ok());
     /// ```
-    pub fn validate(phrase: &str, lang: Language) -> Result<(), Error> {
+    pub fn validate(phrase: &str, lang: Lang) -> Result<(), Error> {
         Mnemonic::phrase_to_entropy(phrase, lang)?;
 
         Ok(())
@@ -184,7 +183,7 @@ impl Mnemonic {
     /// Only intended for internal use, as returning a `Vec<u8>` that looks a bit like it could be
     /// used as the seed is likely to cause problems for someone eventually. All the other functions
     /// that return something like that are explicit about what it is and what to use it for.
-    fn phrase_to_entropy(phrase: &str, lang: Language) -> Result<Vec<u8>, Error> {
+    fn phrase_to_entropy(phrase: &str, lang: Lang) -> Result<Vec<u8>, Error> {
         let wordmap = lang.wordmap();
 
         // Preallocate enough space for the longest possible word list
@@ -254,30 +253,30 @@ impl Mnemonic {
     /// Get the [`Language`][Language]
     ///
     /// [Language]: ../language/struct.Language.html
-    pub fn language(&self) -> Language {
+    pub fn language(&self) -> Lang {
         self.lang
     }
 }
 
-impl AsRef<str> for Mnemonic {
+impl<Lang: LangTrait> AsRef<str> for Mnemonic<Lang> {
     fn as_ref(&self) -> &str {
         self.phrase()
     }
 }
 
-impl fmt::Display for Mnemonic {
+impl<Lang: LangTrait> fmt::Display for Mnemonic<Lang> {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         fmt::Display::fmt(self.phrase(), f)
     }
 }
 
-impl fmt::Debug for Mnemonic {
+impl<Lang: LangTrait> fmt::Debug for Mnemonic<Lang> {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         fmt::Debug::fmt(self.phrase(), f)
     }
 }
 
-impl fmt::LowerHex for Mnemonic {
+impl<Lang: LangTrait> fmt::LowerHex for Mnemonic<Lang> {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         if f.alternate() {
             f.write_str("0x")?;
@@ -291,7 +290,7 @@ impl fmt::LowerHex for Mnemonic {
     }
 }
 
-impl fmt::UpperHex for Mnemonic {
+impl<Lang: LangTrait> fmt::UpperHex for Mnemonic<Lang> {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         if f.alternate() {
             f.write_str("0x")?;
@@ -305,15 +304,31 @@ impl fmt::UpperHex for Mnemonic {
     }
 }
 
-impl From<Mnemonic> for String {
-    fn from(val: Mnemonic) -> String {
+impl<Lang: LangTrait> From<Mnemonic<Lang>> for String {
+    fn from(val: Mnemonic<Lang>) -> String {
         val.into_phrase()
+    }
+}
+
+// Manual impl so we don't zeroize the language
+impl<Lang: LangTrait> Zeroize for Mnemonic<Lang> {
+    fn zeroize(&mut self) {
+        self.phrase.zeroize();
+        self.entropy.zeroize();
+    }
+}
+
+// Manually call zeroize on Drop, since we can't use `#[zeroize(drop)]`
+impl<Lang: LangTrait> Drop for Mnemonic<Lang> {
+    fn drop(&mut self) {
+        self.zeroize();
     }
 }
 
 #[cfg(test)]
 mod test {
     use super::*;
+    use crate::language::Language;
 
     #[test]
     fn back_to_back() {
