@@ -3,6 +3,7 @@ use unicode_normalization::UnicodeNormalization;
 use zeroize::Zeroize;
 use crate::crypto::pbkdf2;
 use crate::mnemonic::Mnemonic;
+use crate::language::LangTrait;
 
 /// The secret value used to derive HD wallet addresses from a [`Mnemonic`][Mnemonic] phrase.
 ///
@@ -30,7 +31,7 @@ impl Seed {
     /// Generates the seed from the [`Mnemonic`][Mnemonic] and the password.
     ///
     /// [Mnemonic]: ./mnemonic/struct.Mnemonic.html
-    pub fn new(mnemonic: &Mnemonic, password: &str) -> Self {
+    pub fn new<Lang: LangTrait>(mnemonic: &Mnemonic<Lang>, password: &str) -> Self {
         let salt = format!("mnemonic{}", password);
         let normalized_salt = salt.nfkd().to_string();
         let bytes = pbkdf2(mnemonic.phrase().as_bytes(), &normalized_salt);

@@ -37,7 +37,7 @@ mod util;
 mod crypto;
 
 pub use error::ErrorKind;
-pub use language::Language;
+pub use language::{Language, CustomLanguage, LangTrait};
 pub use mnemonic::Mnemonic;
 pub use mnemonic_type::MnemonicType;
 pub use seed::Seed;
