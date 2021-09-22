@@ -2,7 +2,7 @@ use std::fmt;
 use anyhow::Error;
 use std::mem;
 use unicode_normalization::UnicodeNormalization;
-use zeroize::Zeroize;
+use zeroize::Zeroizing;
 use crate::crypto::{gen_random_bytes, sha256_first_byte};
 use crate::error::ErrorKind;
 use crate::language::Language;
@@ -34,12 +34,11 @@ use crate::util::{checksum, BitWriter, IterExt};
 /// [Seed::new()]: ./seed/struct.Seed.html#method.new
 /// [Seed::as_bytes()]: ./seed/struct.Seed.html#method.as_bytes
 ///
-#[derive(Clone, Zeroize)]
-#[zeroize(drop)]
+#[derive(Clone)]
 pub struct Mnemonic {
-    phrase: String,
+    phrase: Zeroizing<String>,
     lang: Language,
-    entropy: Vec<u8>,
+    entropy: Zeroizing<Vec<u8>>,
 }
 
 impl Mnemonic {
@@ -94,7 +93,7 @@ impl Mnemonic {
     where
         E: Into<Vec<u8>>,
     {
-        let entropy = entropy.into();
+        let entropy = Zeroizing::new(entropy.into());
         let wordlist = lang.wordlist();
 
         let checksum_byte = sha256_first_byte(&entropy);
@@ -108,12 +107,12 @@ impl Mnemonic {
         //
         // Given the entropy is of correct size, this ought to give us the correct word
         // count.
-        let phrase = entropy
+        let phrase = Zeroizing::new(entropy
             .iter()
             .chain(Some(&checksum_byte))
             .bits()
             .map(|bits| wordlist.get_word(bits))
-            .join(" ");
+            .join(" "));
 
         Mnemonic {
             phrase,
@@ -140,15 +139,15 @@ impl Mnemonic {
     ///
     /// [Mnemonic]: ../mnemonic/struct.Mnemonic.html
     pub fn from_phrase(phrase: &str, lang: Language) -> Result<Mnemonic, Error> {
-        let phrase = phrase
+        let phrase = Zeroizing::new(phrase
             .split_whitespace()
             .map(|w| w.nfkd())
-            .join::<String>(" ");
+            .join::<String>(" "));
 
         // this also validates the checksum and phrase length before returning the entropy so we
         // can store it. We don't use the validate function here to avoid having a public API that
         // takes a phrase string and returns the entropy directly.
-        let entropy = Mnemonic::phrase_to_entropy(&phrase, lang)?;
+        let entropy = Zeroizing::new( Mnemonic::phrase_to_entropy(&phrase, lang)?);
 
         let mnemonic = Mnemonic {
             phrase,
