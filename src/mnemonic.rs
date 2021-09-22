@@ -147,7 +147,7 @@ impl Mnemonic {
         // this also validates the checksum and phrase length before returning the entropy so we
         // can store it. We don't use the validate function here to avoid having a public API that
         // takes a phrase string and returns the entropy directly.
-        let entropy = Zeroizing::new( Mnemonic::phrase_to_entropy(&phrase, lang)?);
+        let entropy = Zeroizing::new(Mnemonic::phrase_to_entropy(&phrase, lang)?);
 
         let mnemonic = Mnemonic {
             phrase,
