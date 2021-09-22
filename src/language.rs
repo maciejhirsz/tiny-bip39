@@ -1,7 +1,6 @@
 use crate::error::ErrorKind;
 use crate::util::{Bits, Bits11};
 use rustc_hash::FxHashMap;
-use zeroize::Zeroize;
 
 pub struct WordMap {
     inner: FxHashMap<&'static str, Bits11>,
@@ -113,8 +112,7 @@ mod lazy {
 ///
 /// [Mnemonic]: ./mnemonic/struct.Mnemonic.html
 /// [Seed]: ./seed/struct.Seed.html
-#[derive(Debug, Clone, Copy, PartialEq, Zeroize)]
-#[zeroize(drop)]
+#[derive(Debug, Clone, Copy, PartialEq)]
 pub enum Language {
     English,
     #[cfg(feature = "chinese-simplified")]
