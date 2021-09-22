@@ -114,7 +114,6 @@ mod lazy {
 /// [Mnemonic]: ./mnemonic/struct.Mnemonic.html
 /// [Seed]: ./seed/struct.Seed.html
 #[derive(Debug, Clone, Copy, PartialEq, Zeroize)]
-#[zeroize(drop)]
 pub enum Language {
     English,
     #[cfg(feature = "chinese-simplified")]
