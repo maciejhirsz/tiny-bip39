@@ -18,8 +18,11 @@ pub enum ErrorKind {
 #[cfg(test)]
 mod test {
     use super::*;
+    #[cfg(target_arch = "wasm32")]
+    use wasm_bindgen_test::*;
 
-    #[test]
+    #[cfg_attr(all(target_arch = "wasm32"), wasm_bindgen_test)]
+    #[cfg_attr(not(target_arch = "wasm32"), test)]
     fn prints_correctly() {
         assert_eq!(
             format!("{}", ErrorKind::InvalidChecksum),
@@ -30,7 +33,10 @@ mod test {
             "invalid keysize: 42",
         );
         assert_eq!(
-            format!("{}", ErrorKind::InvalidEntropyLength(42, MnemonicType::Words12)),
+            format!(
+                "{}",
+                ErrorKind::InvalidEntropyLength(42, MnemonicType::Words12)
+            ),
             "invalid entropy length 42bits for mnemonic type Words12",
         );
     }

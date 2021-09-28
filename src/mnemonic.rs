@@ -313,8 +313,11 @@ impl From<Mnemonic> for String {
 #[cfg(test)]
 mod test {
     use super::*;
+    #[cfg(target_arch = "wasm32")]
+    use wasm_bindgen_test::*;
 
-    #[test]
+    #[cfg_attr(all(target_arch = "wasm32"), wasm_bindgen_test)]
+    #[cfg_attr(not(target_arch = "wasm32"), test)]
     fn back_to_back() {
         let m1 = Mnemonic::new(MnemonicType::Words12, Language::English);
         let m2 = Mnemonic::from_phrase(m1.phrase(), Language::English).unwrap();
@@ -326,7 +329,8 @@ mod test {
         assert_eq!(m1.phrase(), m3.phrase(), "Phrase must be the same");
     }
 
-    #[test]
+    #[cfg_attr(all(target_arch = "wasm32"), wasm_bindgen_test)]
+    #[cfg_attr(not(target_arch = "wasm32"), test)]
     fn mnemonic_from_entropy() {
         let entropy = &[
             0x33, 0xE4, 0x6B, 0xB1, 0x3A, 0x74, 0x6E, 0xA4, 0x1C, 0xDD, 0xE4, 0x5C, 0x90, 0x84,
@@ -339,7 +343,8 @@ mod test {
         assert_eq!(phrase, mnemonic.phrase());
     }
 
-    #[test]
+    #[cfg_attr(all(target_arch = "wasm32"), wasm_bindgen_test)]
+    #[cfg_attr(not(target_arch = "wasm32"), test)]
     fn mnemonic_from_phrase() {
         let entropy = &[
             0x33, 0xE4, 0x6B, 0xB1, 0x3A, 0x74, 0x6E, 0xA4, 0x1C, 0xDD, 0xE4, 0x5C, 0x90, 0x84,
@@ -352,14 +357,16 @@ mod test {
         assert_eq!(entropy, mnemonic.entropy());
     }
 
-    #[test]
+    #[cfg_attr(all(target_arch = "wasm32"), wasm_bindgen_test)]
+    #[cfg_attr(not(target_arch = "wasm32"), test)]
     fn mnemonic_format() {
         let mnemonic = Mnemonic::new(MnemonicType::Words15, Language::English);
 
         assert_eq!(mnemonic.phrase(), format!("{}", mnemonic));
     }
 
-    #[test]
+    #[cfg_attr(all(target_arch = "wasm32"), wasm_bindgen_test)]
+    #[cfg_attr(not(target_arch = "wasm32"), test)]
     fn mnemonic_hex_format() {
         let entropy = &[
             0x03, 0xE4, 0x6B, 0xB1, 0x3A, 0x74, 0x6E, 0xA4, 0x1C, 0xDD, 0xE4, 0x5C, 0x90, 0x84,
