@@ -1,6 +1,6 @@
 [package]
 name = "tiny-bip39"
-version = "0.8.1"
+version = "0.8.2"
 authors = [
     "Stephen Oliver <steve@infincia.com>",
     "Maciej Hirsz <hello@maciej.codes>",
