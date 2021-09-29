@@ -202,8 +202,11 @@ impl fmt::Display for MnemonicType {
 #[cfg(test)]
 mod test {
     use super::*;
+    #[cfg(target_arch = "wasm32")]
+    use wasm_bindgen_test::*;
 
-    #[test]
+    #[cfg_attr(all(target_arch = "wasm32"), wasm_bindgen_test)]
+    #[cfg_attr(not(target_arch = "wasm32"), test)]
     fn word_count() {
         assert_eq!(MnemonicType::Words12.word_count(), 12);
         assert_eq!(MnemonicType::Words15.word_count(), 15);
@@ -212,7 +215,8 @@ mod test {
         assert_eq!(MnemonicType::Words24.word_count(), 24);
     }
 
-    #[test]
+    #[cfg_attr(all(target_arch = "wasm32"), wasm_bindgen_test)]
+    #[cfg_attr(not(target_arch = "wasm32"), test)]
     fn entropy_bits() {
         assert_eq!(MnemonicType::Words12.entropy_bits(), 128);
         assert_eq!(MnemonicType::Words15.entropy_bits(), 160);
@@ -221,7 +225,8 @@ mod test {
         assert_eq!(MnemonicType::Words24.entropy_bits(), 256);
     }
 
-    #[test]
+    #[cfg_attr(all(target_arch = "wasm32"), wasm_bindgen_test)]
+    #[cfg_attr(not(target_arch = "wasm32"), test)]
     fn checksum_bits() {
         assert_eq!(MnemonicType::Words12.checksum_bits(), 4);
         assert_eq!(MnemonicType::Words15.checksum_bits(), 5);

@@ -1,6 +1,6 @@
-extern crate bip39;
-
 use bip39::{Language, Mnemonic, MnemonicType};
+#[cfg(target_arch = "wasm32")]
+use wasm_bindgen_test::*;
 
 fn validate_language(lang: Language) {
     let types = &[
@@ -21,15 +21,31 @@ fn validate_language(lang: Language) {
     }
 }
 
-#[test]
-fn validate_12_english() {
+macro_rules! test_maybe_wasm {
+    ($name:ident, $(#[$attr:meta])+, $body:expr) => {
+        #[cfg_attr(all(target_arch = "wasm32"), wasm_bindgen_test)]
+        #[cfg_attr(not(target_arch = "wasm32"), test)]
+        $(#[$attr])*
+        fn $name() {
+            $body
+        }
+    };
+    ($name:ident, $body:expr) => {
+        #[cfg_attr(all(target_arch = "wasm32"), wasm_bindgen_test)]
+        #[cfg_attr(not(target_arch = "wasm32"), test)]
+        fn $name() {
+            $body
+        }
+    };
+}
+
+test_maybe_wasm!(validate_12_english, {
     let phrase = "park remain person kitchen mule spell knee armed position rail grid ankle";
 
     let _ = Mnemonic::from_phrase(phrase, Language::English).expect("Can create a Mnemonic");
-}
+});
 
-#[test]
-fn validate_12_english_extra_spaces() {
+test_maybe_wasm!(validate_12_english_extra_spaces, {
     let phrase = " park remain  person kitchen mule spell knee armed position rail grid ankle ";
     let clean_phrase = "park remain person kitchen mule spell knee armed position rail grid ankle";
 
@@ -38,93 +54,67 @@ fn validate_12_english_extra_spaces() {
         Mnemonic::from_phrase(clean_phrase, Language::English).expect("Can create a Mnemonic");
 
     assert_eq!(mnemonic.entropy(), clean_mnemonic.entropy());
-}
+});
 
-#[test]
-fn validate_15_english() {
+test_maybe_wasm!(validate_15_english, {
     let phrase = "any paddle cabbage armor atom satoshi fiction night wisdom nasty they midnight chicken play phone";
 
     let _ = Mnemonic::from_phrase(phrase, Language::English).expect("Can create a Mnemonic");
-}
+});
 
-#[test]
-fn validate_18_english() {
+test_maybe_wasm!(validate_18_english, {
     let phrase = "soda oak spy claim best oppose gun ghost school use sign shock sign pipe vote follow category filter";
 
     let _ = Mnemonic::from_phrase(phrase, Language::English).expect("Can create a Mnemonic");
-}
+});
 
-#[test]
-fn validate_21_english() {
+test_maybe_wasm!(validate_21_english, {
     let phrase = "quality useless orient offer pole host amazing title only clog sight wild anxiety gloom market rescue fan language entry fan oyster";
 
     let _ = Mnemonic::from_phrase(phrase, Language::English).expect("Can create a Mnemonic");
-}
+});
 
-#[test]
-fn validate_24_english() {
+test_maybe_wasm!(validate_24_english, {
     let phrase = "always guess retreat devote warm poem giraffe thought prize ready maple daughter girl feel clay silent lemon bracket abstract basket toe tiny sword world";
 
     let _ = Mnemonic::from_phrase(phrase, Language::English).expect("Can create a Mnemonic");
-}
+});
 
-#[test]
-fn validate_12_english_uppercase() {
+test_maybe_wasm!(validate_12_english_uppercase, {
     let invalid_phrase =
         "Park remain person kitchen mule spell knee armed position rail grid ankle";
 
     assert!(Mnemonic::from_phrase(invalid_phrase, Language::English).is_err());
-}
+});
 
-#[test]
-fn validate_english() {
+test_maybe_wasm!(validate_english, {
     validate_language(Language::English);
-}
+});
 
-#[test]
-#[cfg(feature = "chinese-simplified")]
-
-fn validate_chinese_simplified() {
+test_maybe_wasm!(validate_chinese_simplified, #[cfg(feature = "chinese-simplified")], {
     validate_language(Language::ChineseSimplified);
-}
+});
 
-#[test]
-#[cfg(feature = "chinese-traditional")]
-
-fn validate_chinese_traditional() {
+test_maybe_wasm!(validate_chinese_traditional, #[cfg(feature = "chinese-traditional")], {
     validate_language(Language::ChineseTraditional);
-}
+});
 
-#[test]
-#[cfg(feature = "french")]
-
-fn validate_french() {
+test_maybe_wasm!(validate_french, #[cfg(feature = "french")], {
     validate_language(Language::French);
-}
+});
 
-#[test]
-#[cfg(feature = "italian")]
-fn validate_italian() {
+test_maybe_wasm!(validate_italian, #[cfg(feature = "italian")], {
     validate_language(Language::Italian);
-}
+});
 
-#[test]
-#[cfg(feature = "japanese")]
-
-fn validate_japanese() {
+test_maybe_wasm!(validate_japanese, #[cfg(feature = "japanese")], {
     validate_language(Language::Japanese);
-}
+});
 
-#[test]
-#[cfg(feature = "korean")]
-
-fn validate_korean() {
+test_maybe_wasm!(validate_korean, #[cfg(feature = "korean")], {
     validate_language(Language::Korean);
-}
+});
 
-#[test]
-#[cfg(feature = "spanish")]
-
-fn validate_spanish() {
+test_maybe_wasm!(validate_spanish, #[cfg(feature = "spanish")], {
     validate_language(Language::Spanish);
-}
+});

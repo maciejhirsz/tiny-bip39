@@ -88,8 +88,11 @@ impl fmt::UpperHex for Seed {
 mod test {
     use super::*;
     use crate::language::Language;
+    #[cfg(target_arch = "wasm32")]
+    use wasm_bindgen_test::*;
 
-    #[test]
+    #[cfg_attr(all(target_arch = "wasm32"), wasm_bindgen_test)]
+    #[cfg_attr(not(target_arch = "wasm32"), test)]
     fn seed_hex_format() {
         let entropy = &[
             0x33, 0xE4, 0x6B, 0xB1, 0x3A, 0x74, 0x6E, 0xA4, 0x1C, 0xDD, 0xE4, 0x5C, 0x90, 0x84,
@@ -111,7 +114,8 @@ mod test {
         assert_eq!(format!("{:x}", seed), expected_seed_hex);
     }
 
-    #[test]
+    #[cfg_attr(all(target_arch = "wasm32"), wasm_bindgen_test)]
+    #[cfg_attr(not(target_arch = "wasm32"), test)]
     /// Test vector is derived from https://github.com/infincia/bip39-rs/issues/26#issuecomment-586476647
     #[cfg(feature = "spanish")]
     fn issue_26() {
@@ -123,7 +127,8 @@ mod test {
         );
     }
 
-    #[test]
+    #[cfg_attr(all(target_arch = "wasm32"), wasm_bindgen_test)]
+    #[cfg_attr(not(target_arch = "wasm32"), test)]
     /// https://github.com/MetacoSA/NBitcoin/blob/master/NBitcoin.Tests/data/bip39_vectors.en.json
     fn password_is_unicode_normalized() {
         test_unicode_normalization(
@@ -134,7 +139,8 @@ mod test {
         );
     }
 
-    #[test]
+    #[cfg_attr(all(target_arch = "wasm32"), wasm_bindgen_test)]
+    #[cfg_attr(not(target_arch = "wasm32"), test)]
     /// https://github.com/bip32JP/bip32JP.github.io/commit/360c05a6439e5c461bbe5e84c7567ec38eb4ac5f
     #[cfg(feature = "japanese")]
     fn japanese_normalization_1() {
@@ -146,7 +152,8 @@ mod test {
         );
     }
 
-    #[test]
+    #[cfg_attr(all(target_arch = "wasm32"), wasm_bindgen_test)]
+    #[cfg_attr(not(target_arch = "wasm32"), test)]
     #[cfg(feature = "japanese")]
     fn japanese_normalization_2() {
         test_unicode_normalization(
@@ -157,7 +164,8 @@ mod test {
         );
     }
 
-    #[test]
+    #[cfg_attr(all(target_arch = "wasm32"), wasm_bindgen_test)]
+    #[cfg_attr(not(target_arch = "wasm32"), test)]
     #[cfg(feature = "french")]
     fn french_normalization() {
         test_unicode_normalization(

@@ -1,6 +1,3 @@
-extern crate bip39;
-extern crate hex;
-
 use bip39::{Language, Mnemonic, Seed};
 
 fn test_mnemonic(entropy_hex: &str, expected_phrase: &str) {
@@ -32,7 +29,10 @@ fn test_seed(phrase: &str, password: &str, expected_seed_hex: &str) {
 macro_rules! tests {
     ($([$entropy_hex:expr, $phrase:expr, $seed_hex:expr, $xprv:expr]),*) => {
         mod mnemonic_tests {
-            #[test]
+            #[cfg(target_arch = "wasm32")]
+            use wasm_bindgen_test::*;
+            #[cfg_attr(all(target_arch = "wasm32"), wasm_bindgen_test)]
+            #[cfg_attr(not(target_arch = "wasm32"), test)]
             fn test_all() {
                 $(
                     super::test_mnemonic($entropy_hex, $phrase);
@@ -41,7 +41,10 @@ macro_rules! tests {
         }
 
         mod seed_tests {
-            #[test]
+            #[cfg(target_arch = "wasm32")]
+            use wasm_bindgen_test::*;
+            #[cfg_attr(all(target_arch = "wasm32"), wasm_bindgen_test)]
+            #[cfg_attr(not(target_arch = "wasm32"), test)]
             fn test_all() {
                 $(
                     super::test_seed($phrase, "TREZOR", $seed_hex);

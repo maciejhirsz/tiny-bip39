@@ -212,22 +212,27 @@ mod test {
     use super::lazy;
     use super::Language;
     use super::WordList;
+    #[cfg(target_arch = "wasm32")]
+    use wasm_bindgen_test::*;
 
-    #[test]
+    #[cfg_attr(all(target_arch = "wasm32"), wasm_bindgen_test)]
+    #[cfg_attr(not(target_arch = "wasm32"), test)]
     fn words_by_prefix() {
         let wl = &lazy::WORDLIST_ENGLISH;
         let res = wl.get_words_by_prefix("woo");
         assert_eq!(res, ["wood","wool"]);
     }
 
-    #[test]
+    #[cfg_attr(all(target_arch = "wasm32"), wasm_bindgen_test)]
+    #[cfg_attr(not(target_arch = "wasm32"), test)]
     fn all_words_by_prefix() {
         let wl = &lazy::WORDLIST_ENGLISH;
         let res = wl.get_words_by_prefix("");
         assert_eq!(res.len(), 2048);
     }
 
-    #[test]
+    #[cfg_attr(all(target_arch = "wasm32"), wasm_bindgen_test)]
+    #[cfg_attr(not(target_arch = "wasm32"), test)]
     fn words_by_invalid_prefix() {
         let wl = &lazy::WORDLIST_ENGLISH;
         let res = wl.get_words_by_prefix("woof");
@@ -244,49 +249,57 @@ mod test {
         return true;
     }
 
-    #[test]
+    #[cfg_attr(all(target_arch = "wasm32"), wasm_bindgen_test)]
+    #[cfg_attr(not(target_arch = "wasm32"), test)]
     #[cfg(feature = "chinese-simplified")]
     fn chinese_simplified_wordlist_is_nfkd() {
         assert!(is_wordlist_nfkd(&lazy::WORDLIST_CHINESE_SIMPLIFIED));
     }
 
-    #[test]
+    #[cfg_attr(all(target_arch = "wasm32"), wasm_bindgen_test)]
+    #[cfg_attr(not(target_arch = "wasm32"), test)]
     #[cfg(feature = "chinese-traditional")]
     fn chinese_traditional_wordlist_is_nfkd() {
         assert!(is_wordlist_nfkd(&lazy::WORDLIST_CHINESE_TRADITIONAL));
     }
 
-    #[test]
+    #[cfg_attr(all(target_arch = "wasm32"), wasm_bindgen_test)]
+    #[cfg_attr(not(target_arch = "wasm32"), test)]
     #[cfg(feature = "french")]
     fn french_wordlist_is_nfkd() {
         assert!(is_wordlist_nfkd(&lazy::WORDLIST_FRENCH));
     }
 
-    #[test]
+    #[cfg_attr(all(target_arch = "wasm32"), wasm_bindgen_test)]
+    #[cfg_attr(not(target_arch = "wasm32"), test)]
     #[cfg(feature = "italian")]
     fn italian_wordlist_is_nfkd() {
         assert!(is_wordlist_nfkd(&lazy::WORDLIST_ITALIAN));
     }
 
-    #[test]
+    #[cfg_attr(all(target_arch = "wasm32"), wasm_bindgen_test)]
+    #[cfg_attr(not(target_arch = "wasm32"), test)]
     #[cfg(feature = "japanese")]
     fn japanese_wordlist_is_nfkd() {
         assert!(is_wordlist_nfkd(&lazy::WORDLIST_JAPANESE));
     }
 
-    #[test]
+    #[cfg_attr(all(target_arch = "wasm32"), wasm_bindgen_test)]
+    #[cfg_attr(not(target_arch = "wasm32"), test)]
     #[cfg(feature = "korean")]
     fn korean_wordlist_is_nfkd() {
         assert!(is_wordlist_nfkd(&lazy::WORDLIST_KOREAN));
     }
 
-    #[test]
+    #[cfg_attr(all(target_arch = "wasm32"), wasm_bindgen_test)]
+    #[cfg_attr(not(target_arch = "wasm32"), test)]
     #[cfg(feature = "spanish")]
     fn spanish_wordlist_is_nfkd() {
         assert!(is_wordlist_nfkd(&lazy::WORDLIST_SPANISH));
     }
 
-    #[test]
+    #[cfg_attr(all(target_arch = "wasm32"), wasm_bindgen_test)]
+    #[cfg_attr(not(target_arch = "wasm32"), test)]
     fn from_language_code_en() {
         assert_eq!(
             Language::from_language_code("En").expect("en is a valid language"),
@@ -294,7 +307,8 @@ mod test {
         );
     }
 
-    #[test]
+    #[cfg_attr(all(target_arch = "wasm32"), wasm_bindgen_test)]
+    #[cfg_attr(not(target_arch = "wasm32"), test)]
     #[cfg(feature = "chinese-simplified")]
     fn from_language_code_cn_hans() {
         assert_eq!(
@@ -303,7 +317,8 @@ mod test {
         );
     }
 
-    #[test]
+    #[cfg_attr(all(target_arch = "wasm32"), wasm_bindgen_test)]
+    #[cfg_attr(not(target_arch = "wasm32"), test)]
     #[cfg(feature = "chinese-traditional")]
     fn from_language_code_cn_hant() {
         assert_eq!(
@@ -312,7 +327,8 @@ mod test {
         );
     }
 
-    #[test]
+    #[cfg_attr(all(target_arch = "wasm32"), wasm_bindgen_test)]
+    #[cfg_attr(not(target_arch = "wasm32"), test)]
     #[cfg(feature = "french")]
     fn from_language_code_fr() {
         assert_eq!(
@@ -321,7 +337,8 @@ mod test {
         );
     }
 
-    #[test]
+    #[cfg_attr(all(target_arch = "wasm32"), wasm_bindgen_test)]
+    #[cfg_attr(not(target_arch = "wasm32"), test)]
     #[cfg(feature = "italian")]
     fn from_language_code_it() {
         assert_eq!(
@@ -330,7 +347,8 @@ mod test {
         );
     }
 
-    #[test]
+    #[cfg_attr(all(target_arch = "wasm32"), wasm_bindgen_test)]
+    #[cfg_attr(not(target_arch = "wasm32"), test)]
     #[cfg(feature = "japanese")]
     fn from_language_code_ja() {
         assert_eq!(
@@ -339,7 +357,8 @@ mod test {
         );
     }
 
-    #[test]
+    #[cfg_attr(all(target_arch = "wasm32"), wasm_bindgen_test)]
+    #[cfg_attr(not(target_arch = "wasm32"), test)]
     #[cfg(feature = "korean")]
     fn from_language_code_ko() {
         assert_eq!(
@@ -348,7 +367,8 @@ mod test {
         );
     }
 
-    #[test]
+    #[cfg_attr(all(target_arch = "wasm32"), wasm_bindgen_test)]
+    #[cfg_attr(not(target_arch = "wasm32"), test)]
     #[cfg(feature = "spanish")]
     fn from_language_code_es() {
         assert_eq!(
@@ -357,7 +377,8 @@ mod test {
         );
     }
 
-    #[test]
+    #[cfg_attr(all(target_arch = "wasm32"), wasm_bindgen_test)]
+    #[cfg_attr(not(target_arch = "wasm32"), test)]
     fn from_invalid_language_code() {
         assert_eq!(Language::from_language_code("not a real language"), None);
     }
