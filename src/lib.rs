@@ -48,25 +48,40 @@ use libc::c_void;
 use std::ffi::CString;
 use std::ffi::CStr;
 
-
+// c_mneumonic_words: 24,18 or 12
+// Return codes:  0 : Success
+//               -1 : Could not set word count do desired number
+//               -2 : Invalid input: word count must be 12,18 or 24
+//               -3 : Internal error: Did not generate mneumonic with desired word count
+//               -4 : Internal error: The seed is incorrect length
+//               -5 : pca_phrase_size too small to hold the mneumonic words
+//               -6 : runtime exception occurred
 #[no_mangle]
 pub unsafe extern "C" 
-fn bip39_generate_new_seed(pca_phrase: *mut c_void, c_phrase_size: *const u8, pca_seed: *mut c_void ) -> i8 {
-    let mnemonic_type = MnemonicType::for_word_count(24).unwrap();
-    if mnemonic_type.word_count() != 24 {
+fn bip39_generate_new_seed(c_mnemonic_words: u8, pca_phrase: *mut c_void, pc_phrase_size: *const u8, pca_seed: *mut c_void ) -> i8 {
+    if (c_mnemonic_words!=24) && (c_mnemonic_words!=18) && (c_mnemonic_words!=12) {
+      return -2;
+    }
+ 
+    let result_a = MnemonicType::for_word_count( c_mnemonic_words.into() );
+    if result_a.is_err() {
+      return -6;
+    }
+    let mnemonic_type = result_a.unwrap();
+    if mnemonic_type.word_count() != c_mnemonic_words.into() {
       return -1;
     }
-
     let mnemonic = Mnemonic::new(mnemonic_type, Language::English);
+
     let actual_word_count = mnemonic.phrase().split(" ").count();
-    if actual_word_count != 24 {
-      return -1;
+    if actual_word_count != c_mnemonic_words.into() {
+      return -3;
     }
 
     let seed = Seed::new(&mnemonic, "");
     let seed_bytes: &[u8] = seed.as_bytes();
     if seed_bytes.len() != 64 {
-      return -1;
+      return -4;
     }
     
     //Copy seed into return parameter
@@ -78,9 +93,9 @@ fn bip39_generate_new_seed(pca_phrase: *mut c_void, c_phrase_size: *const u8, pc
     let s_mnemonic_len = mnemonic.phrase().len();
     let s_mnemonic     = CString::new( mnemonic.phrase() ).unwrap();
 
-    let i_phrase_usize: usize = *c_phrase_size as usize;
+    let i_phrase_usize: usize = *pc_phrase_size as usize;
     if i_phrase_usize < (s_mnemonic_len+1) {
-      return -2;
+      return -5;
     }
 
     //Copy mnemonic into parameter, including null terminating character
@@ -89,6 +104,14 @@ fn bip39_generate_new_seed(pca_phrase: *mut c_void, c_phrase_size: *const u8, pc
     return 0;
 }
 
+// pca_phrase: mnemonic string consisting of 12, 18 or 24 words
+// c_phrase_length: string length of pca_phrase
+// Return codes:  0 : Success
+//               -1 : The supplied string length doesn't match the calculated length of pca_phrase
+//               -2 : Invalid input: word count must be 12,18 or 24
+//               -3 : Internal error: Incorrect phrase length
+//               -4 : Internal error: Incorrect seed length
+//               -5 : Internal error: Could not regenerate the seed from the input phrase
 #[no_mangle]
 pub unsafe extern "C" 
 fn bip39_regenerate_seed_from_mnemonic(pca_phrase: *mut c_void, c_phrase_length: *const u8, pca_seed: *mut c_void) -> i8 {
@@ -102,23 +125,32 @@ fn bip39_regenerate_seed_from_mnemonic(pca_phrase: *mut c_void, c_phrase_length:
     let s_menmonic = cs_mnemonic.to_str().unwrap();
     let trimmed = s_menmonic.trim();
     let phrase_word_count =trimmed.split(" ").count();
-    if phrase_word_count!=24 {
-        return -1;
-    }
-      
-    let mnemonic = Mnemonic::from_phrase(trimmed, Language::English).expect("Can create a Mnemonic");
-    let actual_word_count = mnemonic.phrase().split(" ").count();
-    if actual_word_count!=24 {
+    if phrase_word_count!=24 && phrase_word_count!=18 && phrase_word_count!=12
+    {
         return -2;
     }
 
-    let seed = Seed::new(&mnemonic, "");
-    let seed_bytes: &[u8] = seed.as_bytes();
-    if seed_bytes.len() != 64 {
-      return -2;
-    }    
-    //Copy seed into return parameter
-    ptr::copy_nonoverlapping(seed_bytes.as_ptr(), pca_seed as *mut u8, 64);
+    //If not explicitly handling the Err() a program abort (panic) will occur
+    //instead of the library returning with the error code
+    let result = Mnemonic::from_phrase(trimmed, Language::English);
+    match result {
+      Ok(mnemonic) => {
 
-    return 0;
+        let actual_word_count = mnemonic.phrase().split(" ").count();
+        if actual_word_count!=phrase_word_count {
+          return -3;
+        }
+
+        let seed = Seed::new(&mnemonic, "");
+        let seed_bytes: &[u8] = seed.as_bytes();
+        if seed_bytes.len() != 64 {
+          return -4;
+        }    
+        //Copy seed into return parameter
+        ptr::copy_nonoverlapping(seed_bytes.as_ptr(), pca_seed as *mut u8, 64);
+
+        return 0;
+      },      
+      Err(_) => {return -5;}
+  };      
 }

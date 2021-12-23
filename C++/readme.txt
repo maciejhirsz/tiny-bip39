@@ -19,7 +19,8 @@ Build
   you need to include this H file.
 
   Run 'make'
-  ./generate_seed
+  ./generate_seed_debug   -- execute the 'debug' build
+  ./generate_seed_release -- executes the 'release' build
 
 Using the library
 =================
