@@ -63,7 +63,7 @@ int perform_test(uint8_t cMneumonicSize)
     if (iI<63)
       printf(",");
   }
-  printf("}\n\n");  
+  printf("}\n");  
   
   if (strncmp ( (char *)&ca_seed[0], (char *)&ca_seed2[0], 64) == 0)
   {
@@ -77,36 +77,50 @@ int perform_test(uint8_t cMneumonicSize)
   }
 }
 
-int evaluate_mneumonic()
+// Return codes: 0 - success
+//              -1 - Input error
+//              -2 - function call failed
+int evaluate_mneumonic(char *pca_phrase, uint8_t cLength)
 {
   int8_t cReturnCode; 
-  uint8_t cSize;
-  unsigned char ca_phrase[254];
-  unsigned char ca_seed2[64];
+  uint8_t ca_seed[64];
   
-  memset(&ca_phrase[0],0x55,254);
-  memset(&ca_seed2,0,64);  
+  memset(&ca_seed,0,64);  
   
-  sprintf( (char *)&ca_phrase[0], "brisk detail range elder useful nose claw venue erase neglect settle funny maze tired claw fortune comfort tip deny flight joke physical avocado explain");
-  
-  cSize = strlen( (char *)&ca_phrase[0] );
-  try
+  if (pca_phrase[cLength] != 0)
   {
-    cReturnCode = bip39_regenerate_seed_from_mnemonic(&ca_phrase[0], &cSize, &ca_seed2[0]);
+    return -1;
   }
-  catch(...)
+
+  cReturnCode = bip39_regenerate_seed_from_mnemonic( (uint8_t *)pca_phrase, &cLength, &ca_seed[0]);
+  switch (cReturnCode)
   {
-    cReturnCode=-1;
+    case 0: // Success
+      break;
+    case -1:
+      printf("bip39_regenerate_seed_from_mnemonic() string length invalid\n");
+      return -1;
+    case -2:
+      printf("bip39_regenerate_seed_from_mnemonic() Invalid input: word count must be 12,18 or 24\n");
+      return -2;
+    case -3:
+      printf("bip39_regenerate_seed_from_mnemonic() Internal error: Incorrect phrase length\n");
+      return -2;
+    case -4:
+      printf("bip39_regenerate_seed_from_mnemonic() Internal error: Incorrect seed length\n");
+      return -2;
+    case -5:
+      printf("bip39_regenerate_seed_from_mnemonic() Could not regenerate the seed from the input phrase\n");      
+      return -2;
+    default:
+      printf("bip39_regenerate_seed_from_mnemonic() Unknown return code: %d\n",cReturnCode);
+      return -2;
   }
-  if (cReturnCode != 0)
-  {
-    printf("Error generating seed from mnemonic. ReturnCode=%d\n",cReturnCode);
-    exit(0);
-  }
+
   printf("Regenerated seed from the mnemonic:\n     {");
   for (int iI=0;iI<64;iI++)
   {
-    printf("0x%02x",ca_seed2[iI]);
+    printf("0x%02x",ca_seed[iI]);
     if (iI<63)
       printf(",");
   }
@@ -117,6 +131,9 @@ int evaluate_mneumonic()
 
 int main()
 {
+  char caData[255];
+  int8_t cReturnCode;
+  
   printf("---- 24 word mneumonic ----\n");
   perform_test(24);
   
@@ -126,8 +143,31 @@ int main()
   printf("\n\n---- 12 word mneumonic ----\n");
   perform_test(12);
 
-  printf("\n\n---- evaluate a mneumonic ----\n");
-  evaluate_mneumonic();
+  printf("\n\n\n---- evaluate a mneumonic : Expect checksum failure ----\n");  
+  //Swopped the first 2 words to trigger invalid checksum
+  sprintf(&caData[0],"brisk detail range elder useful nose claw venue erase neglect settle funny maze tired claw fortune comfort tip deny flight joke physical avocado explain");
+  cReturnCode = evaluate_mneumonic(&caData[0], strlen(caData));
+  if (cReturnCode == -2)
+  {
+    printf("Checksum error detected correctly\n");
+  }
+  else
+  {
+    printf("Expected a function failure. Received %d instead\n",cReturnCode);
+  }
+  
+  printf("\n\n---- evaluate a mneumonic : Expect success ----\n");  
+  //Swopped the first 2 words to trigger invalid checksum
+  sprintf(&caData[0],"detail brisk range elder useful nose claw venue erase neglect settle funny maze tired claw fortune comfort tip deny flight joke physical avocado explain");
+  cReturnCode = evaluate_mneumonic(&caData[0], strlen(caData));
+  if (cReturnCode == 0)
+  {
+    printf("Success\n");
+  }
+  else
+  {
+    printf("Expected success. Received %d instead\n",cReturnCode);
+  }  
   
   return 0;
 }

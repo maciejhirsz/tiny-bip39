@@ -1,4 +1,4 @@
-all: debug releaes
+all: debug release
 
 CPPFLAGS=-I./ 
 
