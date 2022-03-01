@@ -31,19 +31,19 @@ spanish = []
 default = ["chinese-simplified", "chinese-traditional", "french", "italian", "japanese", "korean", "spanish"]
 
 [dependencies]
-anyhow = "1.0"
-thiserror = "1.0"
-rustc-hash = "1.1"
-sha2 = "0.10"
-hmac = "0.12"
-pbkdf2 = { version = "0.10", default-features = false }
-rand = "0.8"
-once_cell = { version = "1.9" }
-unicode-normalization = "0.1"
-zeroize = { version = "1.5", features = ["zeroize_derive"] }
+anyhow = "1.0.55"
+thiserror = "1.0.30"
+rustc-hash = "1.1.0"
+sha2 = "0.10.2"
+hmac = "0.12.1"
+pbkdf2 = { version = "0.10.1", default-features = false }
+rand = "0.8.5"
+once_cell = { version = "1.9.0" }
+unicode-normalization = "0.1.19"
+zeroize = { version = "1.5.3", features = ["zeroize_derive"] }
 
 [dev-dependencies]
-hex = "0.4"
+hex = "0.4.3"
 
 [target.'cfg(target_arch = "wasm32")'.dependencies]
 wasm-bindgen = "0.2"
