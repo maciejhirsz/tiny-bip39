@@ -21,14 +21,20 @@ pub(crate) fn sha256_first_byte(input: &[u8]) -> u8 {
 
 /// Random byte generator, used to create new mnemonics
 ///
-pub(crate) fn gen_random_bytes(byte_length: usize) -> Vec<u8> {
-    let mut rng = thread_rng();
+pub(crate) fn gen_random_bytes_with<R: RngCore>(rng: &mut R, byte_length: usize) -> Vec<u8> {
     let mut bytes = vec![0u8; byte_length];
 
-    rng.fill_bytes(&mut bytes);
+    RngCore::fill_bytes(rng, &mut bytes);
 
     bytes
 }
+
+/// Random byte generator, used to create new mnemonics
+///
+pub(crate) fn gen_random_bytes(byte_length: usize) -> Vec<u8> {
+    gen_random_bytes_with(&mut thread_rng(), byte_length)
+}
+
 /// PBKDF2 helper, used to generate [`Seed`][Seed] from [`Mnemonic`][Mnemonic]
 ///
 /// [Mnemonic]: ../mnemonic/struct.Mnemonic.html

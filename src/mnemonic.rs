@@ -1,9 +1,10 @@
-use std::fmt;
 use anyhow::Error;
+use rand::RngCore;
+use std::fmt;
 use std::mem;
 use unicode_normalization::UnicodeNormalization;
 use zeroize::Zeroizing;
-use crate::crypto::{gen_random_bytes, sha256_first_byte};
+use crate::crypto::{gen_random_bytes, gen_random_bytes_with, sha256_first_byte};
 use crate::error::ErrorKind;
 use crate::language::Language;
 use crate::mnemonic_type::MnemonicType;
@@ -28,6 +29,7 @@ use crate::util::{checksum, BitWriter, IterExt};
 ///
 /// [Mnemonic]: ./mnemonic/struct.Mnemonic.html
 /// [Mnemonic::new()]: ./mnemonic/struct.Mnemonic.html#method.new
+/// [Mnemonic::new_with()]: ./mnemonic/struct.Mnemonic.html#method.new_with
 /// [Mnemonic::from_phrase()]: ./mnemonic/struct.Mnemonic.html#method.from_phrase
 /// [Mnemonic::entropy()]: ./mnemonic/struct.Mnemonic.html#method.entropy
 /// [Seed]: ./seed/struct.Seed.html
@@ -63,6 +65,33 @@ impl Mnemonic {
     /// [Mnemonic::phrase()]: ./mnemonic/struct.Mnemonic.html#method.phrase
     pub fn new(mtype: MnemonicType, lang: Language) -> Mnemonic {
         let entropy = gen_random_bytes(mtype.entropy_bits() / 8);
+
+        Mnemonic::from_entropy_unchecked(entropy, lang)
+    }
+
+    /// Generates a new [`Mnemonic`][Mnemonic] using the given random number generator.
+    ///
+    /// Use [`Mnemonic::phrase()`][Mnemonic::phrase()] to get an `str` slice of the generated phrase.
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use rand::rngs::OsRng;
+    /// use bip39::{Mnemonic, MnemonicType, Language};
+    ///
+    /// let mut rng = OsRng;
+    /// let mnemonic = Mnemonic::new_with(&mut rng, MnemonicType::Words12, Language::English);
+    /// let phrase = mnemonic.phrase();
+    ///
+    /// println!("phrase: {}", phrase);
+    ///
+    /// assert_eq!(phrase.split(" ").count(), 12);
+    /// ```
+    ///
+    /// [Mnemonic]: ./mnemonic/struct.Mnemonic.html
+    /// [Mnemonic::phrase()]: ./mnemonic/struct.Mnemonic.html#method.phrase
+    pub fn new_with<R: RngCore>(rng: &mut R, mtype: MnemonicType, lang: Language) -> Mnemonic {
+        let entropy = gen_random_bytes_with(rng, mtype.entropy_bits() / 8);
 
         Mnemonic::from_entropy_unchecked(entropy, lang)
     }
