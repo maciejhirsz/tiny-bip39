@@ -1,6 +1,6 @@
 use std::fmt;
 use unicode_normalization::UnicodeNormalization;
-use zeroize::Zeroize;
+use zeroize::{Zeroize, Zeroizing};
 use crate::crypto::pbkdf2;
 use crate::mnemonic::Mnemonic;
 
@@ -31,8 +31,8 @@ impl Seed {
     ///
     /// [Mnemonic]: ./mnemonic/struct.Mnemonic.html
     pub fn new(mnemonic: &Mnemonic, password: &str) -> Self {
-        let salt = format!("mnemonic{}", password);
-        let normalized_salt = salt.nfkd().to_string();
+        let salt = Zeroizing::new(format!("mnemonic{}", password));
+        let normalized_salt = Zeroizing::new(salt.nfkd().to_string());
         let bytes = pbkdf2(mnemonic.phrase().as_bytes(), &normalized_salt);
 
         Self { bytes }
