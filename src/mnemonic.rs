@@ -1,13 +1,15 @@
-use std::fmt;
-use anyhow::Error;
-use std::mem;
-use unicode_normalization::UnicodeNormalization;
-use zeroize::Zeroizing;
-use crate::crypto::{gen_random_bytes, sha256_first_byte};
+#[cfg(feature = "rand")]
+use crate::crypto::gen_random_bytes;
+use crate::crypto::sha256_first_byte;
 use crate::error::ErrorKind;
 use crate::language::Language;
 use crate::mnemonic_type::MnemonicType;
 use crate::util::{checksum, BitWriter, IterExt};
+use anyhow::Error;
+use std::fmt;
+use std::mem;
+use unicode_normalization::UnicodeNormalization;
+use zeroize::Zeroizing;
 
 /// The primary type in this crate, most tasks require creating or using one.
 ///
@@ -61,6 +63,7 @@ impl Mnemonic {
     ///
     /// [Mnemonic]: ./mnemonic/struct.Mnemonic.html
     /// [Mnemonic::phrase()]: ./mnemonic/struct.Mnemonic.html#method.phrase
+    #[cfg(feature = "rand")]
     pub fn new(mtype: MnemonicType, lang: Language) -> Mnemonic {
         let entropy = gen_random_bytes(mtype.entropy_bits() / 8);
 
@@ -107,12 +110,14 @@ impl Mnemonic {
         //
         // Given the entropy is of correct size, this ought to give us the correct word
         // count.
-        let phrase = Zeroizing::new(entropy
-            .iter()
-            .chain(Some(&checksum_byte))
-            .bits()
-            .map(|bits| wordlist.get_word(bits))
-            .join(" "));
+        let phrase = Zeroizing::new(
+            entropy
+                .iter()
+                .chain(Some(&checksum_byte))
+                .bits()
+                .map(|bits| wordlist.get_word(bits))
+                .join(" "),
+        );
 
         Mnemonic {
             phrase,
@@ -139,10 +144,12 @@ impl Mnemonic {
     ///
     /// [Mnemonic]: ../mnemonic/struct.Mnemonic.html
     pub fn from_phrase(phrase: &str, lang: Language) -> Result<Mnemonic, Error> {
-        let phrase = Zeroizing::new(phrase
-            .split_whitespace()
-            .map(|w| w.nfkd())
-            .join::<String>(" "));
+        let phrase = Zeroizing::new(
+            phrase
+                .split_whitespace()
+                .map(|w| w.nfkd())
+                .join::<String>(" "),
+        );
 
         // this also validates the checksum and phrase length before returning the entropy so we
         // can store it. We don't use the validate function here to avoid having a public API that
