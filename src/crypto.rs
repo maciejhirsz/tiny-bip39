@@ -5,8 +5,6 @@
 //! [Seed]: ../seed/struct.Seed.html
 //!
 
-// #[cfg(feature = "rand")]
-// extern crate rand;
 use hmac::Hmac;
 #[cfg(feature = "rand")]
 use rand::{thread_rng, RngCore};
