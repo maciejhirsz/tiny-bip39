@@ -1,6 +1,6 @@
 [package]
 name = "tiny-bip39"
-version = "1.0.0"
+version = "1.0.1"
 authors = [
     "Stephen Oliver <steve@infincia.com>",
     "Maciej Hirsz <hello@maciej.codes>",
@@ -27,15 +27,22 @@ italian = []
 japanese = []
 korean = []
 spanish = []
-default-langs = ["chinese-simplified", "chinese-traditional", "french", "italian", "japanese", "korean", "spanish"]
-
-default = ["default-langs", "rand"]
+default-langs = [
+	"chinese-simplified",
+	"chinese-traditional",
+	"french",
+	"italian",
+	"japanese",
+	"korean",
+	"spanish",
+]
+default = [ "default-langs", "rand", "sha2/std" ]
 
 [dependencies]
 anyhow = "1.0.57"
 thiserror = "1.0.31"
 rustc-hash = "1.1.0"
-sha2 = "0.10.2"
+sha2 = { version = "0.10.2", default-features = false }
 hmac = "0.12.1"
 pbkdf2 = { version = "0.11.0", default-features = false }
 rand = { version = "0.8.5", optional = true }
