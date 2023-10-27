@@ -1,8 +1,13 @@
-use std::fmt;
-use unicode_normalization::UnicodeNormalization;
-use zeroize::{Zeroize, Zeroizing};
+use core::fmt;
+extern crate alloc;
+#[cfg(not(feature = "std"))]
+use crate::alloc::string::ToString;
 use crate::crypto::pbkdf2;
 use crate::mnemonic::Mnemonic;
+use crate::Vec;
+use alloc::format;
+use unicode_normalization::UnicodeNormalization;
+use zeroize::{Zeroize, Zeroizing};
 
 /// The secret value used to derive HD wallet addresses from a [`Mnemonic`][Mnemonic] phrase.
 ///
@@ -108,7 +113,12 @@ mod test {
         assert_eq!(format!("{:#X}", seed), "0x0BDE96F14C35A66235478E0C16C152FCAF6301E4D9A81D3FEBC50879FE7E5438E6A8DD3E39BDF3AB7B12D6B44218710E17D7A2844EE9633FAB0E03D9A6C8569B");
     }
 
-    fn test_unicode_normalization(lang: Language, phrase: &str, password: &str, expected_seed_hex: &str) {
+    fn test_unicode_normalization(
+        lang: Language,
+        phrase: &str,
+        password: &str,
+        expected_seed_hex: &str,
+    ) {
         let mnemonic = Mnemonic::from_phrase(phrase, lang).unwrap();
         let seed = Seed::new(&mnemonic, password);
         assert_eq!(format!("{:x}", seed), expected_seed_hex);

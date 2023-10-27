@@ -5,9 +5,11 @@ use crate::error::ErrorKind;
 use crate::language::Language;
 use crate::mnemonic_type::MnemonicType;
 use crate::util::{checksum, BitWriter, IterExt};
+use crate::String;
+use crate::Vec;
 use anyhow::Error;
-use std::fmt;
-use std::mem;
+use core::fmt;
+use core::mem;
 use unicode_normalization::UnicodeNormalization;
 use zeroize::Zeroizing;
 
@@ -197,7 +199,7 @@ impl Mnemonic {
         let mut bits = BitWriter::with_capacity(264);
 
         for word in phrase.split(" ") {
-            bits.push(wordmap.get_bits(&word)?);
+            bits.push(wordmap.get_bits(&word).map_err(Error::msg)?);
         }
 
         let mtype = MnemonicType::for_word_count(bits.len() / 11)?;
@@ -219,7 +221,7 @@ impl Mnemonic {
         let expected_checksum = checksum(checksum_byte, mtype.checksum_bits());
 
         if actual_checksum != expected_checksum {
-            Err(ErrorKind::InvalidChecksum)?;
+            Err(Error::msg(ErrorKind::InvalidChecksum))?;
         }
 
         Ok(entropy)

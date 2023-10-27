@@ -1,4 +1,4 @@
-use std::fmt;
+use core::fmt;
 use anyhow::Error;
 use crate::error::ErrorKind;
 
@@ -58,7 +58,7 @@ impl MnemonicType {
             18 => MnemonicType::Words18,
             21 => MnemonicType::Words21,
             24 => MnemonicType::Words24,
-            _ => Err(ErrorKind::InvalidWordLength(size))?,
+            _ => Err(Error::msg(ErrorKind::InvalidWordLength(size)))?,
         };
 
         Ok(mnemonic_type)
@@ -82,7 +82,7 @@ impl MnemonicType {
             192 => MnemonicType::Words18,
             224 => MnemonicType::Words21,
             256 => MnemonicType::Words24,
-            _ => Err(ErrorKind::InvalidKeysize(size))?,
+            _ => Err(Error::msg(ErrorKind::InvalidKeysize(size)))?,
         };
 
         Ok(mnemonic_type)

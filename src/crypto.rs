@@ -9,6 +9,7 @@ use hmac::Hmac;
 #[cfg(feature = "rand")]
 use rand::{thread_rng, RngCore};
 use sha2::Digest;
+use crate::Vec;
 
 const PBKDF2_ROUNDS: u32 = 2048;
 const PBKDF2_BYTES: usize = 64;

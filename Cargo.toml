@@ -36,19 +36,20 @@ default-langs = [
 	"korean",
 	"spanish",
 ]
-default = [ "default-langs", "rand", "sha2/std" ]
+default = [ "default-langs", "rand", "std" ]
+std = ["sha2/std",  "anyhow/std", "rustc-hash/std", "unicode-normalization/std" ]
+
 
 [dependencies]
-anyhow = "1.0.57"
-thiserror = "1.0.31"
-rustc-hash = "1.1.0"
+anyhow = {version = "1.0.57", default-features = false }
+rustc-hash = { version = "1.1.0", default-features = false }
 sha2 = { version = "0.10.2", default-features = false }
 hmac = "0.12.1"
 pbkdf2 = { version = "0.11.0", default-features = false }
 rand = { version = "0.8.5", optional = true }
-once_cell = "1.12.0"
-unicode-normalization = "0.1.19"
+unicode-normalization = { version = "0.1.19", default-features = false }
 zeroize = { version = "1.5.5", features = ["zeroize_derive"] }
+lazy_static = { version = "1.4.0", default-features = false, features = [ "spin_no_std" ] }
 
 [dev-dependencies]
 hex = "0.4.3"

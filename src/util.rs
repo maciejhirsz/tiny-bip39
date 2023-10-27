@@ -1,3 +1,5 @@
+use crate::String;
+use crate::Vec;
 use unicode_normalization::Decompositions;
 
 pub(crate) trait IterExt: Iterator {
@@ -148,7 +150,7 @@ impl BitWriter {
 }
 
 pub(crate) struct BitIter<In: Bits, Out: Bits, I: Iterator<Item = In> + Sized> {
-    _phantom: ::std::marker::PhantomData<Out>,
+    _phantom: core::marker::PhantomData<Out>,
     source: I,
     read: usize,
     buffer: u64,
@@ -164,7 +166,7 @@ where
         let source = source.into_iter();
 
         BitIter {
-            _phantom: ::std::marker::PhantomData,
+            _phantom: core::marker::PhantomData,
             source,
             read: 0,
             buffer: 0,

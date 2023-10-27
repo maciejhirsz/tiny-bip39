@@ -1,6 +1,12 @@
-use crate::error::ErrorKind;
-use crate::util::{Bits, Bits11};
+use crate::{
+    error::ErrorKind,
+    util::{Bits, Bits11},
+    Vec,
+};
+#[cfg(feature = "std")]
 use rustc_hash::FxHashMap;
+#[cfg(not(feature = "std"))]
+type FxHashMap<K, V> = alloc::collections::BTreeMap<K, V>;
 
 pub struct WordMap {
     inner: FxHashMap<&'static str, Bits11>,
@@ -25,10 +31,9 @@ impl WordList {
     }
 
     pub fn get_words_by_prefix(&self, prefix: &str) -> &[&'static str] {
-        let start = self.inner
-            .binary_search(&prefix)
-            .unwrap_or_else(|idx| idx);
-        let count = self.inner[start..].iter()
+        let start = self.inner.binary_search(&prefix).unwrap_or_else(|idx| idx);
+        let count = self.inner[start..]
+            .iter()
             .take_while(|word| word.starts_with(prefix))
             .count();
 
@@ -38,7 +43,7 @@ impl WordList {
 
 mod lazy {
     use super::{Bits11, WordList, WordMap};
-    use once_cell::sync::Lazy;
+    use crate::Vec;
 
     /// lazy generation of the word list
     fn gen_wordlist(lang_words: &'static str) -> WordList {
@@ -60,48 +65,49 @@ mod lazy {
 
         WordMap { inner }
     }
+    lazy_static::lazy_static! {
+        pub static ref WORDLIST_ENGLISH: WordList =
+            gen_wordlist(include_str!("langs/english.txt"));
+        #[cfg(feature = "chinese-simplified")]
+        pub static ref WORDLIST_CHINESE_SIMPLIFIED: WordList =
+            gen_wordlist(include_str!("langs/chinese_simplified.txt"));
+        #[cfg(feature = "chinese-traditional")]
+        pub static ref WORDLIST_CHINESE_TRADITIONAL: WordList =
+            gen_wordlist(include_str!("langs/chinese_traditional.txt"));
+        #[cfg(feature = "french")]
+        pub static ref WORDLIST_FRENCH: WordList =
+            gen_wordlist(include_str!("langs/french.txt"));
+        #[cfg(feature = "italian")]
+        pub static ref WORDLIST_ITALIAN: WordList =
+            gen_wordlist(include_str!("langs/italian.txt"));
+        #[cfg(feature = "japanese")]
+        pub static ref WORDLIST_JAPANESE: WordList =
+            gen_wordlist(include_str!("langs/japanese.txt"));
+        #[cfg(feature = "korean")]
+        pub static ref WORDLIST_KOREAN: WordList =
+            gen_wordlist(include_str!("langs/korean.txt"));
+        #[cfg(feature = "spanish")]
+        pub static ref WORDLIST_SPANISH: WordList =
+            gen_wordlist(include_str!("langs/spanish.txt"));
 
-    pub static WORDLIST_ENGLISH: Lazy<WordList> =
-        Lazy::new(|| gen_wordlist(include_str!("langs/english.txt")));
-    #[cfg(feature = "chinese-simplified")]
-    pub static WORDLIST_CHINESE_SIMPLIFIED: Lazy<WordList> =
-        Lazy::new(|| gen_wordlist(include_str!("langs/chinese_simplified.txt")));
-    #[cfg(feature = "chinese-traditional")]
-    pub static WORDLIST_CHINESE_TRADITIONAL: Lazy<WordList> =
-        Lazy::new(|| gen_wordlist(include_str!("langs/chinese_traditional.txt")));
-    #[cfg(feature = "french")]
-    pub static WORDLIST_FRENCH: Lazy<WordList> =
-        Lazy::new(|| gen_wordlist(include_str!("langs/french.txt")));
-    #[cfg(feature = "italian")]
-    pub static WORDLIST_ITALIAN: Lazy<WordList> =
-        Lazy::new(|| gen_wordlist(include_str!("langs/italian.txt")));
-    #[cfg(feature = "japanese")]
-    pub static WORDLIST_JAPANESE: Lazy<WordList> =
-        Lazy::new(|| gen_wordlist(include_str!("langs/japanese.txt")));
-    #[cfg(feature = "korean")]
-    pub static WORDLIST_KOREAN: Lazy<WordList> =
-        Lazy::new(|| gen_wordlist(include_str!("langs/korean.txt")));
-    #[cfg(feature = "spanish")]
-    pub static WORDLIST_SPANISH: Lazy<WordList> =
-        Lazy::new(|| gen_wordlist(include_str!("langs/spanish.txt")));
-
-    pub static WORDMAP_ENGLISH: Lazy<WordMap> = Lazy::new(|| gen_wordmap(&WORDLIST_ENGLISH));
-    #[cfg(feature = "chinese-simplified")]
-    pub static WORDMAP_CHINESE_SIMPLIFIED: Lazy<WordMap> =
-        Lazy::new(|| gen_wordmap(&WORDLIST_CHINESE_SIMPLIFIED));
-    #[cfg(feature = "chinese-traditional")]
-    pub static WORDMAP_CHINESE_TRADITIONAL: Lazy<WordMap> =
-        Lazy::new(|| gen_wordmap(&WORDLIST_CHINESE_TRADITIONAL));
-    #[cfg(feature = "french")]
-    pub static WORDMAP_FRENCH: Lazy<WordMap> = Lazy::new(|| gen_wordmap(&WORDLIST_FRENCH));
-    #[cfg(feature = "italian")]
-    pub static WORDMAP_ITALIAN: Lazy<WordMap> = Lazy::new(|| gen_wordmap(&WORDLIST_ITALIAN));
-    #[cfg(feature = "japanese")]
-    pub static WORDMAP_JAPANESE: Lazy<WordMap> = Lazy::new(|| gen_wordmap(&WORDLIST_JAPANESE));
-    #[cfg(feature = "korean")]
-    pub static WORDMAP_KOREAN: Lazy<WordMap> = Lazy::new(|| gen_wordmap(&WORDLIST_KOREAN));
-    #[cfg(feature = "spanish")]
-    pub static WORDMAP_SPANISH: Lazy<WordMap> = Lazy::new(|| gen_wordmap(&WORDLIST_SPANISH));
+        pub static ref WORDMAP_ENGLISH: WordMap = gen_wordmap(&WORDLIST_ENGLISH);
+        #[cfg(feature = "chinese-simplified")]
+        pub static ref WORDMAP_CHINESE_SIMPLIFIED: WordMap =
+            gen_wordmap(&WORDLIST_CHINESE_SIMPLIFIED);
+        #[cfg(feature = "chinese-traditional")]
+        pub static ref WORDMAP_CHINESE_TRADITIONAL: WordMap =
+            gen_wordmap(&WORDLIST_CHINESE_TRADITIONAL);
+        #[cfg(feature = "french")]
+        pub static ref WORDMAP_FRENCH: WordMap = gen_wordmap(&WORDLIST_FRENCH);
+        #[cfg(feature = "italian")]
+        pub static ref WORDMAP_ITALIAN: WordMap = gen_wordmap(&WORDLIST_ITALIAN);
+        #[cfg(feature = "japanese")]
+        pub static ref WORDMAP_JAPANESE: WordMap = gen_wordmap(&WORDLIST_JAPANESE);
+        #[cfg(feature = "korean")]
+        pub static ref WORDMAP_KOREAN: WordMap = gen_wordmap(&WORDLIST_KOREAN);
+        #[cfg(feature = "spanish")]
+        pub static ref WORDMAP_SPANISH: WordMap = gen_wordmap(&WORDLIST_SPANISH);
+    }
 }
 
 /// The language determines which words will be used in a mnemonic phrase, but also indirectly
@@ -220,7 +226,7 @@ mod test {
     fn words_by_prefix() {
         let wl = &lazy::WORDLIST_ENGLISH;
         let res = wl.get_words_by_prefix("woo");
-        assert_eq!(res, ["wood","wool"]);
+        assert_eq!(res, ["wood", "wool"]);
     }
 
     #[cfg_attr(all(target_arch = "wasm32"), wasm_bindgen_test)]
