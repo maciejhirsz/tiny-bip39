@@ -1,6 +1,6 @@
-use std::fmt;
-use anyhow::Error;
 use crate::error::ErrorKind;
+use anyhow::Error;
+use std::fmt;
 
 const ENTROPY_OFFSET: usize = 8;
 
@@ -29,9 +29,10 @@ const ENTROPY_OFFSET: usize = 8;
 /// [Mnemonic]: ../mnemonic/struct.Mnemonic.html
 /// [Seed]: ../seed/struct.Seed.html
 ///
-#[derive(Debug, Copy, Clone)]
+#[derive(Debug, Copy, Clone, Default)]
 pub enum MnemonicType {
     //  ... = (entropy_bits << ...)   | checksum_bits
+    #[default]
     Words12 = (128 << ENTROPY_OFFSET) | 4,
     Words15 = (160 << ENTROPY_OFFSET) | 5,
     Words18 = (192 << ENTROPY_OFFSET) | 6,
@@ -110,7 +111,7 @@ impl MnemonicType {
     ///
     /// [MnemonicType::entropy_bits()]: ./enum.MnemonicType.html#method.entropy_bits
     pub fn for_phrase(phrase: &str) -> Result<MnemonicType, Error> {
-        let word_count = phrase.split(" ").count();
+        let word_count = phrase.split(' ').count();
 
         Self::for_word_count(word_count)
     }
@@ -179,12 +180,6 @@ impl MnemonicType {
     /// ```
     pub fn word_count(&self) -> usize {
         self.total_bits() / 11
-    }
-}
-
-impl Default for MnemonicType {
-    fn default() -> MnemonicType {
-        MnemonicType::Words12
     }
 }
 

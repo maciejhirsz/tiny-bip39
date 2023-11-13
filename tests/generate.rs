@@ -6,7 +6,7 @@ fn test_word_count(expected_word_count: usize) {
     let mnemonic_type = MnemonicType::for_word_count(expected_word_count).unwrap();
 
     let mnemonic = Mnemonic::new(mnemonic_type, Language::English);
-    let actual_word_count = mnemonic.phrase().split(" ").count();
+    let actual_word_count = mnemonic.phrase().split(' ').count();
 
     assert_eq!(actual_word_count, expected_word_count);
     assert_eq!(mnemonic_type.word_count(), expected_word_count);
@@ -24,7 +24,7 @@ macro_rules! test_maybe_wasm {
         fn $name() {
             $body
         }
-    }
+    };
 }
 
 test_maybe_wasm!(generate_12_english, {
