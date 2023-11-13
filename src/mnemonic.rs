@@ -58,7 +58,7 @@ impl Mnemonic {
     ///
     /// println!("phrase: {}", phrase);
     ///
-    /// assert_eq!(phrase.split(" ").count(), 12);
+    /// assert_eq!(phrase.split(' ').count(), 12);
     /// ```
     ///
     /// [Mnemonic]: ./mnemonic/struct.Mnemonic.html
@@ -196,8 +196,8 @@ impl Mnemonic {
         // Preallocate enough space for the longest possible word list
         let mut bits = BitWriter::with_capacity(264);
 
-        for word in phrase.split(" ") {
-            bits.push(wordmap.get_bits(&word)?);
+        for word in phrase.split(' ') {
+            bits.push(wordmap.get_bits(word)?);
         }
 
         let mtype = MnemonicType::for_word_count(bits.len() / 11)?;
@@ -232,9 +232,8 @@ impl Mnemonic {
 
     /// Consume the `Mnemonic` and return the phrase as a `String`.
     pub fn into_phrase(mut self) -> String {
-        // Create an empty string and swap values with the mnemonic's phrase.
         // This allows `Mnemonic` to implement `Drop`, while still returning the phrase.
-        mem::replace(&mut self.phrase, String::new())
+        mem::take(&mut self.phrase)
     }
 
     /// Get the original entropy value of the mnemonic phrase as a slice.
