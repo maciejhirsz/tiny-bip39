@@ -196,8 +196,9 @@ impl Mnemonic {
         // Preallocate enough space for the longest possible word list
         let mut bits = BitWriter::with_capacity(264);
 
-        for word in phrase.split(" ") {
-            bits.push(wordmap.get_bits(&word)?);
+        for (idx, word) in phrase.split(' ').enumerate() {
+            let word_bits = wordmap.get_bits(word).ok_or(ErrorKind::InvalidWord(idx))?;
+            bits.push(word_bits);
         }
 
         let mtype = MnemonicType::for_word_count(bits.len() / 11)?;

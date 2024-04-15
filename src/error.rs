@@ -5,8 +5,8 @@ use thiserror::Error;
 pub enum ErrorKind {
     #[error("invalid checksum")]
     InvalidChecksum,
-    #[error("invalid word in phrase")]
-    InvalidWord,
+    #[error("invalid word in phrase with index {0}")]
+    InvalidWord(usize),
     #[error("invalid keysize: {0}")]
     InvalidKeysize(usize),
     #[error("invalid number of words in phrase: {0}")]
