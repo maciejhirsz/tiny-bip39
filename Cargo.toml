@@ -1,6 +1,6 @@
 [package]
 name = "tiny-bip39"
-version = "1.0.0"
+version = "2.0.0"
 authors = [
     "Stephen Oliver <steve@infincia.com>",
     "Maciej Hirsz <hello@maciej.codes>",
@@ -32,7 +32,6 @@ default-langs = ["chinese-simplified", "chinese-traditional", "french", "italian
 default = ["default-langs", "rand"]
 
 [dependencies]
-anyhow = "1.0.57"
 thiserror = "1.0.31"
 rustc-hash = "1.1.0"
 sha2 = "0.10.2"

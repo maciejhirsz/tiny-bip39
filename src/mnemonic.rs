@@ -5,7 +5,6 @@ use crate::error::ErrorKind;
 use crate::language::Language;
 use crate::mnemonic_type::MnemonicType;
 use crate::util::{checksum, BitWriter, IterExt};
-use anyhow::Error;
 use std::fmt;
 use std::mem;
 use unicode_normalization::UnicodeNormalization;
@@ -85,7 +84,7 @@ impl Mnemonic {
     /// ```
     ///
     /// [Mnemonic]: ../mnemonic/struct.Mnemonic.html
-    pub fn from_entropy(entropy: &[u8], lang: Language) -> Result<Mnemonic, Error> {
+    pub fn from_entropy(entropy: &[u8], lang: Language) -> Result<Mnemonic, ErrorKind> {
         // Validate entropy size
         MnemonicType::for_key_size(entropy.len() * 8)?;
 
@@ -143,7 +142,7 @@ impl Mnemonic {
     /// ```
     ///
     /// [Mnemonic]: ../mnemonic/struct.Mnemonic.html
-    pub fn from_phrase(phrase: &str, lang: Language) -> Result<Mnemonic, Error> {
+    pub fn from_phrase(phrase: &str, lang: Language) -> Result<Mnemonic, ErrorKind> {
         let phrase = Zeroizing::new(
             phrase
                 .split_whitespace()
@@ -179,7 +178,7 @@ impl Mnemonic {
     ///
     /// assert!(Mnemonic::validate(test_mnemonic, Language::English).is_ok());
     /// ```
-    pub fn validate(phrase: &str, lang: Language) -> Result<(), Error> {
+    pub fn validate(phrase: &str, lang: Language) -> Result<(), ErrorKind> {
         Mnemonic::phrase_to_entropy(phrase, lang)?;
 
         Ok(())
@@ -190,7 +189,7 @@ impl Mnemonic {
     /// Only intended for internal use, as returning a `Vec<u8>` that looks a bit like it could be
     /// used as the seed is likely to cause problems for someone eventually. All the other functions
     /// that return something like that are explicit about what it is and what to use it for.
-    fn phrase_to_entropy(phrase: &str, lang: Language) -> Result<Vec<u8>, Error> {
+    fn phrase_to_entropy(phrase: &str, lang: Language) -> Result<Vec<u8>, ErrorKind> {
         let wordmap = lang.wordmap();
 
         // Preallocate enough space for the longest possible word list
