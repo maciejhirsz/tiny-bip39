@@ -5,7 +5,6 @@
 //! [Seed]: ../seed/struct.Seed.html
 //!
 
-use hmac::Hmac;
 #[cfg(feature = "rand")]
 use rand::{thread_rng, RngCore};
 use sha2::Digest;
@@ -38,7 +37,7 @@ pub(crate) fn gen_random_bytes(byte_length: usize) -> Vec<u8> {
 pub(crate) fn pbkdf2(input: &[u8], salt: &str) -> Vec<u8> {
     let mut seed = vec![0u8; PBKDF2_BYTES];
 
-    pbkdf2::pbkdf2::<Hmac<sha2::Sha512>>(input, salt.as_bytes(), PBKDF2_ROUNDS, &mut seed);
+    pbkdf2::pbkdf2_hmac::<sha2::Sha512>(input, salt.as_bytes(), PBKDF2_ROUNDS, &mut seed);
 
     seed
 }
