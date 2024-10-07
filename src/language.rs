@@ -1,4 +1,3 @@
-use crate::error::ErrorKind;
 use crate::util::{Bits, Bits11};
 use rustc_hash::FxHashMap;
 
@@ -11,11 +10,8 @@ pub struct WordList {
 }
 
 impl WordMap {
-    pub fn get_bits(&self, word: &str) -> Result<Bits11, ErrorKind> {
-        match self.inner.get(word) {
-            Some(n) => Ok(*n),
-            None => Err(ErrorKind::InvalidWord)?,
-        }
+    pub fn get_bits(&self, word: &str) -> Option<Bits11> {
+        self.inner.get(word).cloned()
     }
 }
 
