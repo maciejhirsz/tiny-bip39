@@ -1,11 +1,11 @@
 [package]
 name = "tiny-bip39"
-version = "1.0.0"
+version = "2.0.0"
 authors = [
     "Stephen Oliver <steve@infincia.com>",
     "Maciej Hirsz <hello@maciej.codes>",
 ]
-license = "MIT OR Apache-2.0"
+license = "MIT AND (MIT OR Apache-2.0)"
 homepage = "https://github.com/maciejhirsz/tiny-bip39/"
 repository = "https://github.com/maciejhirsz/tiny-bip39/"
 readme = "README.md"
@@ -32,12 +32,10 @@ default-langs = ["chinese-simplified", "chinese-traditional", "french", "italian
 default = ["default-langs", "rand"]
 
 [dependencies]
-anyhow = "1.0.57"
 thiserror = "1.0.31"
 rustc-hash = "1.1.0"
 sha2 = "0.10.2"
-hmac = "0.12.1"
-pbkdf2 = { version = "0.11.0", default-features = false }
+pbkdf2 = { version = "0.12.0", default-features = false, features = ["hmac"] }
 rand = { version = "0.8.5", optional = true }
 once_cell = "1.12.0"
 unicode-normalization = "0.1.19"
