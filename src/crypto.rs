@@ -6,7 +6,7 @@
 //!
 
 #[cfg(feature = "rand")]
-use rand::{thread_rng, RngCore};
+use rand::{rand_core::UnwrapErr, rngs::SysRng, Rng};
 use sha2::Digest;
 
 const PBKDF2_ROUNDS: u32 = 2048;
@@ -22,7 +22,7 @@ pub(crate) fn sha256_first_byte(input: &[u8]) -> u8 {
 ///
 #[cfg(feature = "rand")]
 pub(crate) fn gen_random_bytes(byte_length: usize) -> Vec<u8> {
-    let mut rng = thread_rng();
+    let mut rng = UnwrapErr(SysRng);
     let mut bytes = vec![0u8; byte_length];
 
     rng.fill_bytes(&mut bytes);
