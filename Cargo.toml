@@ -32,7 +32,7 @@ default-langs = ["chinese-simplified", "chinese-traditional", "french", "italian
 default = ["default-langs", "rand"]
 
 [dependencies]
-thiserror = "1.0.31"
+thiserror = "2"
 rustc-hash = "1.1.0"
 sha2 = "0.10.2"
 pbkdf2 = { version = "0.12.0", default-features = false, features = ["hmac"] }
